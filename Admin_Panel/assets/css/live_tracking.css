@@ -1,0 +1,316 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+/* =============== Globals ============== */
+* {
+    font-family: "Ubuntu", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --blue: #2a2185;
+    --white: #fff;
+    --gray: #f5f5f5;
+    --black1: #222;
+    --black2: #999;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+}
+
+/* =============== Navigation ================ */
+.navigation {
+    position: fixed;
+    width: 300px;
+    height: 100%;
+    background: var(--blue);
+    border-left: 10px solid var(--blue);
+    transition: 0.5s;
+    overflow: hidden;
+    z-index: 15;
+}
+
+.navigation.active {
+    width: 80px;
+}
+
+.navigation ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.navigation ul li {
+    position: relative;
+    width: 100%;
+    list-style: none;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+
+.navigation ul li:hover,
+.navigation ul li.hovered {
+    background-color: var(--white);
+}
+
+.navigation ul li:nth-child(1) {
+    margin-bottom: 20px;
+    pointer-events: none;
+}
+
+.navigation ul li a {
+    position: relative;
+    display: block;
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: var(--white);
+}
+
+.navigation ul li:hover a,
+.navigation ul li.hovered a {
+    color: var(--blue);
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
+}
+
+.navigation ul li a .icon ion-icon {
+    font-size: 1.75rem;
+}
+
+.icon1 {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    font-size: 30px;
+    line-height: 70px;
+    text-align: center;
+}
+
+.navigation ul li a .title {
+    position: relative;
+    display: block;
+    padding: 0 10px;
+    height: 60px;
+    line-height: 60px;
+    text-align: start;
+    white-space: nowrap;
+}
+
+.title1 {
+    font-size: 30px;
+    /* Double the original size */
+    font-weight: bold;
+    padding: 0 10px;
+    line-height: 80px;
+}
+
+/* --------- curve outside ---------- */
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px 35px 0 10px var(--white);
+    pointer-events: none;
+}
+
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px -35px 0 10px var(--white);
+    pointer-events: none;
+}
+
+/* Bus Tracking Section */
+.bus-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Two boxes per row */
+    gap: 20px;
+    padding: 30px;
+}
+
+.bus-box {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    border: 2px solid #224780;
+}
+
+.bus-box:hover {
+    transform: scale(1.05);
+}
+
+.bus-box h3 {
+    font-size: 20px;
+    color: #224780;
+    margin-bottom: 5px;
+}
+
+.bus-box p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+/* Map Box for Live Tracking */
+.map {
+    width: 100%;
+    height: 200px;
+    min-height: 300px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.map-container {
+    width: 100%;
+    height: 250px;
+    /* Balanced height */
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    /* Prevents map content overflow */
+}
+
+/* Live Status */
+.live-status {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.running {
+    color: white;
+    background: #27ae60;
+}
+
+.delayed {
+    color: white;
+    background: #e67e22;
+}
+
+.not-available {
+    color: white;
+    background: #c0392b;
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
+}
+
+.navigation ul li a .icon ion-icon {
+    font-size: 1.75rem;
+}
+
+.icon1 {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    font-size: 30px;
+    line-height: 70px;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .bus-container {
+        grid-template-columns: repeat(1, 1fr);
+        /* One box per row */
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .content {
+        margin-left: 200px;
+        max-width: calc(100% - 210px);
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .bus-container {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 150px;
+    }
+
+    .content {
+        margin-left: 160px;
+        width: calc(100% - 160px);
+    }
+}
+
+.sidebar {
+    width: 180px;
+    position: fixed;
+    height: 100vh;
+    /* Full height */
+    z-index: 10;
+    /* Ensures the sidebar doesn't overlap content */
+}
+
+.content {
+    margin-left: 300px;
+    padding: 20px;
+    box-sizing: border-box;
+    width: calc(100% - 300px);
+    /* Ensures content resizes correctly */
+}

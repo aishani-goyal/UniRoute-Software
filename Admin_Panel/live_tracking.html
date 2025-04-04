@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Live Tracking</title>
+
+    <!-- ======= Styles ====== -->
+    <link rel="stylesheet" href="assets/css/live_tracking.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+    <!-- Ionicons for Icons -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons.js"></script>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <!-- =============== Navigation ================ -->
+    <div class="container">
+        <div class="navigation">
+            <ul>
+                <li>
+                    <a href="#">
+                        <span class="icon1">
+                            <i class="fa fa-route"></i>
+                        </span>
+                        <span class="title1">UniRoute</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="admin_home.html">
+                        <span class="icon">
+                            <ion-icon name="home-outline"></ion-icon>
+                        </span>
+                        <span class="title">Dashboard</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="routes_vehicles.html">
+                        <span class="icon">
+                            <ion-icon name="trail-sign-outline"></ion-icon>
+                        </span>
+                        <span class="title">Routes & Vehicles</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="drivers_vendors.html">
+                        <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </span>
+                        <span class="title">Drivers & Vendors</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="people-outline"></ion-icon>
+                        </span>
+                        <span class="title">Users & Authorities</span>
+                    </a>
+                </li>
+
+                <li class="active">
+                    <a href="live_tracking.html">
+                        <span class="icon">
+                            <ion-icon name="map-outline"></ion-icon>
+                        </span>
+                        <span class="title">Live Tracking</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="cash-outline"></ion-icon>
+                        </span>
+                        <span class="title">Fee Management</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="notifications-outline"></ion-icon>
+                        </span>
+                        <span class="title">Notifications</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="settings-outline"></ion-icon>
+                        </span>
+                        <span class="title">Settings</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <span class="icon">
+                            <ion-icon name="log-out-outline"></ion-icon>
+                        </span>
+                        <span class="title">Sign Out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Corrected Content Section -->
+        <div class="content">
+            <h2>Live Bus Tracking</h2>
+
+            <button onclick="startTracking()">Start Tracking</button>
+            <button onclick="stopTracking()">Stop Tracking</button>
+
+            <div class="bus-container">
+                <!-- Bus Route 1 -->
+                <div class="bus-box">
+                    <h3>Route 101</h3>
+                    <p>Vehicle: KA-05-AB-1234</p>
+                    <div id="map1" class="map" data-bus-id="bus1"></div>
+                </div>
+
+                <!-- Bus Route 2 -->
+                <div class="bus-box">
+                    <h3>Route 102</h3>
+                    <p>Vehicle: KA-07-CD-5678</p>
+                    <div id="map2" class="map" data-bus-id="bus2"></div>
+                </div>
+
+                <!-- Bus Route 3 -->
+                <div class="bus-box">
+                    <h3>Route 103</h3>
+                    <p>Vehicle: KA-09-EF-9012</p>
+                    <div id="map3" class="map" data-bus-id="bus3"></div>
+                </div>
+
+                <!-- Bus Route 4 -->
+                <div class="bus-box">
+                    <h3>Route 104</h3>
+                    <p>Vehicle: KA-11-GH-3456</p>
+                    <div id="map4" class="map" data-bus-id="bus4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/live_tracking.js"></script>
+
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</body>
+
+</html>

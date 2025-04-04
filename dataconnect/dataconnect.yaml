@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "uniroutepublicweb"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "fdcdb"
+      cloudSql:
+        instanceId: "uniroutepublicweb-fdc"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

@@ -9,7 +9,8 @@
     <!-- ======= Styles ====== -->
     <link rel="stylesheet" href="assets/css/admin_style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <!-- Include this CDN for reading Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -56,7 +57,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="transport_users.html">
                         <span class="icon">
                             <ion-icon name="people-outline"></ion-icon>
                         </span>
@@ -134,9 +135,11 @@
             <div class="table-header">
                 <h2 class="table-title">Route Management</h2>
                 <div class="button-container">
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;" />
                     <button id="add" class="add-button">
                         <i class="fa fa-upload"></i> Upload
                     </button>
+                    
                     <button id="add-route" class="add-button">
                         <i class="fa fa-plus"></i> Add Route
                     </button>
@@ -179,7 +182,8 @@
             <div class="table-header">
                 <h2 class="table-title">Vehicle Management</h2>
                 <div class="button-container">
-                    <button id="add" class="add-button">
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;" />
+                    <button id="add2" class="add-button">
                         <i class="fa fa-upload"></i> Upload
                     </button>
                     <button id="add-vehicle" class="add-button">

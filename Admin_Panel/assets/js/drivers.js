@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentDriverId = driver ? parseInt(driver.driverId) : getSmallestAvailableId();
     if (isNew) usedIds.add(currentDriverId);
 
-    const uniqueId = docId || `temp-${Date.now()}`; // Temporary ID until saved
+    const uniqueId = docId || `driver-${Date.now()}`;
     const disabledAttr = isNew ? "" : "disabled";
 
     let row = document.createElement("tr");
@@ -73,18 +73,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     deleteButton.addEventListener("click", async function () {
       const idToRemove = parseInt(row.cells[0].innerText.trim());
+    
+      const confirmation = confirm("❗ Are you sure you want to delete this driver?");
+      if (!confirmation) return; // ❌ Stop if user cancels
+    
       usedIds.delete(idToRemove);
       row.remove();
-
-      if (docId && !docId.startsWith("temp-")) {
+    
+      if (docId) {
         try {
           await driversRef.doc(docId).delete();
+          alert("✅ Driver deleted successfully!");
           console.log("Driver deleted from Firebase ✅");
         } catch (error) {
-          console.error("Error deleting driver:", error);
+          console.error("❌ Error deleting driver:", error);
+          alert("⚠️ Failed to delete driver. Please try again.");
         }
       }
     });
+    
 
     row.scrollIntoView({ behavior: "smooth", block: "center" });
   }
@@ -104,7 +111,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let batch = db.batch();
     let hasError = false;
 
-    for (let row of driverRows) {
+    driverRows.forEach((row) => {
+      const docId = row.getAttribute("data-id");
       const cells = row.querySelectorAll("input");
 
       const name = cells[0].value.trim();
@@ -115,15 +123,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!name || !contact || !vehicle || !route) {
         alert("Please fill out all fields before saving.");
         hasError = true;
-        break;
+        return;
       }
-
-      // Construct docId as "driver name_route no."
-      const safeName = name.replace(/\s+/g, "_").toLowerCase();
-      const safeRoute = route.replace(/\s+/g, "_").toLowerCase();
-      const newDocId = `${safeName}_${safeRoute}`;
-
-      row.setAttribute("data-id", newDocId); // Update row for future reference
 
       const driverData = {
         driverId: row.cells[0].innerText.trim(),
@@ -134,9 +135,9 @@ document.addEventListener("DOMContentLoaded", function () {
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       };
 
-      const driverDocRef = driversRef.doc(newDocId);
+      const driverDocRef = driversRef.doc(docId);
       batch.set(driverDocRef, driverData);
-    }
+    });
 
     if (hasError) return;
 
@@ -155,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  //Load driver data
   async function loadDrivers() {
     try {
       const snapshot = await driversRef.orderBy("driverId").get();
@@ -175,3 +177,169 @@ document.addEventListener("DOMContentLoaded", function () {
 
   loadDrivers();
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const db = firebase.firestore();
+  const driversRef = db.collection("institutes").doc("iEe3BjNAYl4nqKJzCXlH").collection("Drivers");
+  const driversTable = document.querySelector("#drivers-table tbody");
+
+  const usedIds = new Set();
+
+  // 🔘 Upload Button Trigger
+  document.getElementById("add3").addEventListener("click", () => {
+    document.getElementById("excelFile").click();
+  });
+
+  // 📂 Handle Excel File Selection
+  document.getElementById("excelFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+      if (jsonData.length === 0) {
+        alert("⚠ No data found in the Excel sheet!");
+        return;
+      }
+
+      const firstRow = jsonData[0];
+
+      if (
+        "ID" in firstRow &&
+        "Driver Name" in firstRow &&
+        "Contact No." in firstRow &&
+        "Assigned Vehicle" in firstRow &&
+        "Assigned Route" in firstRow
+      ) {
+        uploadDriversToFirestore(jsonData);
+      } else {
+        alert("❌ Unknown data format. Please upload a valid Drivers sheet.");
+      }
+    };
+
+    reader.readAsArrayBuffer(file);
+  });
+
+  // 🚐 Upload Drivers to Firestore
+  async function uploadDriversToFirestore(data) {
+    const uploadPromises = data.map((row, index) => {
+      const cleanedRow = {};
+      Object.keys(row).forEach((key) => {
+        const trimmedKey = key.trim();
+        const trimmedValue = typeof row[key] === "string" ? row[key].trim() : row[key];
+        cleanedRow[trimmedKey] = trimmedValue;
+      });
+
+      const driverId = String(cleanedRow["ID"]);
+      const name = cleanedRow["Driver Name"];
+      const contact = cleanedRow["Contact No."];
+      const vehicle = cleanedRow["Assigned Vehicle"];
+      const route = cleanedRow["Assigned Route"];
+
+      if (!driverId || !name || !contact || !vehicle || !route) {
+        console.warn(`⚠ Skipping row ${index + 1} due to missing fields.`);
+        return Promise.resolve(); // Skip
+      }
+
+      const driverData = {
+        driverId,
+        name,
+        contact,
+        vehicle,
+        route,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      return driversRef
+        .doc(driverId)
+        .set(driverData)
+        .then(() => {
+          console.log("✅ Uploaded driver:", driverData);
+        })
+        .catch((error) => {
+          console.error("❌ Driver Upload Error:", error);
+        });
+    });
+
+    await Promise.all(uploadPromises);
+    alert("✅ Drivers uploaded successfully!");
+
+    // ✅ Wait briefly to allow Firestore sync
+    setTimeout(() => {
+      loadDrivers();
+    }, 1000);
+  }
+});
+
+const vendorRef = db.collection("institutes").doc("iEe3BjNAYl4nqKJzCXlH").collection("Vendors").doc("mainVendor");
+
+  const inputs = {
+    companyName: document.getElementById("company-name"),
+    ownerName: document.getElementById("owner-name"),
+    contact: document.getElementById("vendor-contact"),
+    email: document.getElementById("vendor-email"),
+    address: document.getElementById("vendor-address"),
+  };
+
+  const editBtn = document.getElementById("edit-vendor");
+  const saveBtn = document.getElementById("save-vendor");
+
+  // 🔒 Disable or enable all fields
+  function setInputsDisabled(disabled) {
+    Object.values(inputs).forEach((input) => {
+      input.disabled = disabled;
+    });
+  }
+
+  // ✏️ Edit Button
+  editBtn.addEventListener("click", () => {
+    setInputsDisabled(false);
+  });
+
+  // 💾 Save Button
+  saveBtn.addEventListener("click", async () => {
+    const vendorData = {
+      companyName: inputs.companyName.value.trim(),
+      ownerName: inputs.ownerName.value.trim(),
+      contact: inputs.contact.value.trim(),
+      email: inputs.email.value.trim(),
+      address: inputs.address.value.trim(),
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    try {
+      await vendorRef.set(vendorData);
+      alert("✅ Vendor details saved successfully!");
+      setInputsDisabled(true);
+    } catch (error) {
+      console.error("❌ Error saving vendor data:", error);
+      alert("❌ Failed to save vendor details.");
+    }
+  });
+
+  // 🔁 Load Existing Vendor Data
+  async function loadVendor() {
+    try {
+      const doc = await vendorRef.get();
+      if (doc.exists) {
+        const data = doc.data();
+        inputs.companyName.value = data.companyName || "";
+        inputs.ownerName.value = data.ownerName || "";
+        inputs.contact.value = data.contact || "";
+        inputs.email.value = data.email || "";
+        inputs.address.value = data.address || "";
+      }
+    } catch (error) {
+      console.error("❌ Error loading vendor:", error);
+    }
+  }
+
+  // 🚀 Load data on page load
+  document.addEventListener("DOMContentLoaded", loadVendor);

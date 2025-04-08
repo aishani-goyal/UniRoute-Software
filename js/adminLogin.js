@@ -5,6 +5,8 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
+  where,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 // 1. Firebase Configuration
@@ -55,18 +57,48 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// 4. Student & Authority Login
-function studentAuthorityLogin(role) {
+// 4. Student Login
+// Debugging: Check what data is returned from Firestore
+async function studentAuthorityLogin(role) {
   let userId = document.getElementById("userId").value;
   let password = document.getElementById("password").value;
 
   if (userId && password) {
-    alert(`${role.charAt(0).toUpperCase() + role.slice(1)} Login Successful!`);
-    window.location.href = `${role}Dashboard.html`;
+    // Query Firestore
+    const userRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "User_password");
+    const q = query(userRef, where("email", "==", userId));
+    
+    try {
+      const querySnapshot = await getDocs(q);
+      
+      // Debugging: Log the querySnapshot to see the returned data
+      console.log(querySnapshot);
+      
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((doc) => {
+          const storedCredentials = doc.data();
+          console.log(storedCredentials); // Debugging: Log the stored credentials
+
+          // Check credentials
+          if (storedCredentials.email === userId && storedCredentials.password === password) {
+            alert(`${role.charAt(0).toUpperCase() + role.slice(1)} Login Successful!`);
+            window.location.href = `Responsive Student Dashboeard/home.html`;
+          } else {
+            alert("⚠ Invalid email ID or password!");
+          }
+        });
+      } else {
+        alert("⚠ User not found!");
+      }
+    } catch (error) {
+      console.error("Error fetching user data: ", error);
+      alert("⚠ Error fetching user data. Please try again.");
+    }
   } else {
     alert("⚠ Enter valid credentials!");
   }
 }
+
 
 // 5. Driver Login
 function driverLogin() {

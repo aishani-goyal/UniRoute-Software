@@ -1,4 +1,5 @@
 // Your web app's Firebase configuration
+
 const firebaseConfig = {
   apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
   authDomain: "uniroute-3dda9.firebaseapp.com",
@@ -61,9 +62,9 @@ document.addEventListener("DOMContentLoaded", function () {
     try {
       // Step 1: Get all existing vehicle IDs from Firestore
       const snapshot = await vehiclesRef.get();
-      const existingIds = snapshot.docs.map(doc => doc.id);
+      const existingIds = snapshot.docs.map((doc) => doc.id);
       const existingIdSet = new Set(existingIds); // to check existing ones in Firestore
-      const usedIds = new Set(existingIds);       // to keep track of all being used (Firestore + table)
+      const usedIds = new Set(existingIds); // to keep track of all being used (Firestore + table)
       let newId = 1;
 
       const batch = firebase.firestore().batch();
@@ -75,7 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
           let vehicleId = cells[0].innerText.trim();
           const isEmptyId = !vehicleId || vehicleId === "";
           const isNotNumber = !/^\d+$/.test(vehicleId);
-          const isNewDuplicate = usedIds.has(vehicleId) && !existingIdSet.has(vehicleId);
+          const isNewDuplicate =
+            usedIds.has(vehicleId) && !existingIdSet.has(vehicleId);
 
           // Assign new ID if: it's blank, not a number, or a duplicate in the new session
           if (isEmptyId || isNotNumber || isNewDuplicate) {
@@ -106,7 +108,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
       await batch.commit();
       alert("All vehicles have been successfully saved! ✅");
-
     } catch (error) {
       console.error("Error saving vehicles:", error);
       alert("Error saving vehicle details. Please try again.");
@@ -114,16 +115,18 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-
-
 document.getElementById("save-routes").addEventListener("click", async () => {
   const tableRows = document.querySelectorAll("#routes-table tbody tr");
-  const routesRef = firebase.firestore().collection("institutes").doc("iEe3BjNAYl4nqKJzCXlH").collection("routes");
+  const routesRef = firebase
+    .firestore()
+    .collection("institutes")
+    .doc("iEe3BjNAYl4nqKJzCXlH")
+    .collection("routes");
 
   try {
     // Step 1: Fetch existing IDs from Firestore
     const snapshot = await routesRef.get();
-    const existingIds = snapshot.docs.map(doc => doc.id);
+    const existingIds = snapshot.docs.map((doc) => doc.id);
     const existingIdSet = new Set(existingIds);
 
     // Step 2: Track new IDs to avoid duplicates
@@ -139,7 +142,11 @@ document.getElementById("save-routes").addEventListener("click", async () => {
       const isEmptyId = !routeId || routeId === "";
       const isDuplicateId = usedIds.has(routeId);
 
-      if (isEmptyId || !/^\d+$/.test(routeId) || isDuplicateId && !existingIdSet.has(routeId)) {
+      if (
+        isEmptyId ||
+        !/^\d+$/.test(routeId) ||
+        (isDuplicateId && !existingIdSet.has(routeId))
+      ) {
         // Assign new ID only if:
         // - it's blank
         // - not a number
@@ -181,8 +188,6 @@ document.getElementById("save-routes").addEventListener("click", async () => {
   }
 });
 
-
-
 function loadRoutesData() {
   db.collection("institutes")
     .doc("iEe3BjNAYl4nqKJzCXlH")
@@ -190,6 +195,10 @@ function loadRoutesData() {
     .get()
     .then((querySnapshot) => {
       const tbody = document.querySelector("#routes-table tbody");
+      if (querySnapshot.empty) {
+        tbody.innerHTML = `<tr id="no-routes"><td colspan="11" style="text-align:center;">No routes found</td></tr>`;
+        return;
+      }
       tbody.innerHTML = ""; // Clear existing data to prevent duplicates
 
       querySnapshot.forEach((doc) => {
@@ -220,7 +229,6 @@ function loadRoutesData() {
     });
 }
 
-
 function loadVehiclesData() {
   db.collection("institutes")
     .doc("iEe3BjNAYl4nqKJzCXlH")
@@ -229,7 +237,11 @@ function loadVehiclesData() {
     .then((querySnapshot) => {
       const tbody = document.querySelector("#vehicles-table tbody");
       tbody.innerHTML = ""; // Clear existing data to prevent duplicates
-
+      if (querySnapshot.empty) {
+        tbody.innerHTML = `<tr id="no-vehicles"><td colspan="8" style="text-align:center;">No vehicles found</td></tr>`;
+        return;
+      }
+      
       querySnapshot.forEach((doc) => {
         const data = doc.data();
 
@@ -259,10 +271,6 @@ window.addEventListener("load", () => {
   loadVehiclesData();
 });
 
-
-
-
-
 // Function to handle table actions (Edit/Delete)
 async function handleTableActions(tableId, ref) {
   document
@@ -287,7 +295,9 @@ async function handleTableActions(tableId, ref) {
 
       if (button.classList.contains("delete")) {
         // DELETE Functionality
-        if (confirm(`Are you sure you want to delete this entry from ${tableId}?`)) {
+        if (
+          confirm(`Are you sure you want to delete this entry from ${tableId}?`)
+        ) {
           try {
             await ref.doc(docId).delete(); // Delete from Firestore
             row.remove(); // Remove row from UI
@@ -308,8 +318,8 @@ async function handleTableActions(tableId, ref) {
           button.classList.remove("editing");
         } else {
           // Disable editing for all rows before enabling this one
-          document.querySelectorAll(`#${tableId} tbody tr`).forEach(tr => {
-            tr.querySelectorAll(".editable").forEach(cell => {
+          document.querySelectorAll(`#${tableId} tbody tr`).forEach((tr) => {
+            tr.querySelectorAll(".editable").forEach((cell) => {
               cell.setAttribute("contenteditable", "false");
             });
 
@@ -338,7 +348,8 @@ async function saveChanges(tableId, ref) {
   const rows = document.querySelectorAll(`#${tableId} tbody tr`);
 
   for (const row of rows) {
-    let docId = row.children[tableId === "routes-table" ? 1 : 0].textContent.trim();
+    let docId =
+      row.children[tableId === "routes-table" ? 1 : 0].textContent.trim();
 
     if (!docId) {
       console.error(`Missing document ID in table ${tableId}`);
@@ -350,7 +361,7 @@ async function saveChanges(tableId, ref) {
 
     if (!docSnapshot.exists) {
       console.error(`No document found with ID: ${docId} in ${tableId}`);
-      
+
       continue;
     }
 
@@ -378,10 +389,15 @@ async function saveChanges(tableId, ref) {
   }
 }
 
-
 // Firestore References
-const routes = db.collection("institutes").doc("iEe3BjNAYl4nqKJzCXlH").collection("routes");
-const vehicles = db.collection("institutes").doc("iEe3BjNAYl4nqKJzCXlH").collection("vehicles");
+const routes = db
+  .collection("institutes")
+  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .collection("routes");
+const vehicles = db
+  .collection("institutes")
+  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .collection("vehicles");
 
 // Apply to both Routes and Vehicles tables
 handleTableActions("routes-table", routes);
@@ -395,3 +411,140 @@ document.getElementById("save-routes").addEventListener("click", () => {
 document.getElementById("save-vehicles").addEventListener("click", () => {
   saveChanges("vehicles-table", vehicles);
 });
+
+
+document.getElementById("add").addEventListener("click", () => {
+  document.getElementById("excelFile").click();
+});
+document.getElementById("add2").addEventListener("click", () => {
+  document.getElementById("excelFile").click();
+});
+
+document.getElementById("excelFile").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+    if (jsonData.length === 0) {
+      alert("⚠ No data found in the Excel sheet!");
+      return;
+    }
+
+    const firstRow = jsonData[0];
+
+    if ("Route No." in firstRow && "Starting Point" in firstRow) {
+      uploadRoutesToFirestore(jsonData); // Routes data
+    } else if (
+      "vehicleNumber" in firstRow &&
+      "vehicleType" in firstRow &&
+      "capacity" in firstRow &&
+      "assignedRoute" in firstRow &&
+      "assignedDriver" in firstRow &&
+      "status" in firstRow
+    ) {
+      uploadVehiclesToFirestore(jsonData); // Vehicles data
+    } else {
+      alert("❌ Unknown data format. Please upload a valid Routes or Vehicles sheet.");
+    }
+  };
+
+  reader.readAsArrayBuffer(file);
+});
+
+// 🔁 Upload Routes to Firestore
+async function uploadRoutesToFirestore(data) {
+  const uploadPromises = data.map((row) => {
+    const routeData = {
+      route_number: row["Route No."],
+      start_location: row["Starting Point"],
+      total_stops: row["Total Stops"],
+      assigned_vehicle: row["Assigned Vehicle"],
+      assigned_driver: row["Assigned Driver"],
+      spoc_name: row["SPOC Name"],
+      spoc_contact: row["SPOC Contact"],
+      merge_status: row["Merge Status"],
+    };
+
+    const docId = String(row["ID"]);
+
+    return db
+      .collection("institutes")
+      .doc("iEe3BjNAYl4nqKJzCXlH")
+      .collection("routes")
+      .doc(docId)
+      .set(routeData)
+      .then(() => {
+        console.log("✅ Uploaded route:", routeData);
+      })
+      .catch((error) => {
+        console.error("❌ Route Upload Error:", error);
+      });
+  });
+
+  await Promise.all(uploadPromises);
+  alert("✅ Routes uploaded successfully!");
+  loadRoutesData();
+}
+
+// 🚚 Upload Vehicles to Firestore
+async function uploadVehiclesToFirestore(data) {
+  const uploadPromises = data.map((row, index) => {
+    // 🔍 Debug: Clean up and inspect row
+    const cleanedRow = {};
+    Object.keys(row).forEach((key) => {
+      const trimmedKey = key.trim();
+      const trimmedValue = typeof row[key] === 'string' ? row[key].trim() : row[key];
+      cleanedRow[trimmedKey] = trimmedValue;
+    });
+
+    console.log(`🔍 Cleaned Row ${index + 1}:`, cleanedRow);
+
+    const vehicle_no = cleanedRow["vehicleNumber"];
+    const vehicle_type = cleanedRow["vehicleType"];
+    const capacity = cleanedRow["capacity"];
+    const assigned_route = cleanedRow["assignedRoute"];
+    const assigned_driver = cleanedRow["assignedDriver"];
+    const status = cleanedRow["status"];
+    const docId = String(cleanedRow["ID"]);
+
+    if (!vehicle_no || !vehicle_type || !capacity || !assigned_route || !assigned_driver || !status || !docId) {
+      console.warn(`⚠ Skipping row ${index + 1} due to missing fields.`);
+      return Promise.resolve(); // Skip this row
+    }
+
+    const vehicleData = {
+      vehicleNumber: vehicle_no,
+      vehicleType: vehicle_type,
+      capacity,
+      assignedRoute: assigned_route,
+      assignedDriver: assigned_driver,
+      status,
+    };
+
+    return db
+      .collection("institutes")
+      .doc("iEe3BjNAYl4nqKJzCXlH")
+      .collection("vehicles")
+      .doc(docId)
+      .set(vehicleData)
+      .then(() => {
+        console.log("✅ Uploaded vehicle:", vehicleData);
+      })
+      .catch((error) => {
+        console.error("❌ Vehicle Upload Error:", error);
+      });
+  });
+
+  await Promise.all(uploadPromises);
+  alert("✅ Vehicles uploaded successfully!");
+  loadVehiclesData();
+}
+
+

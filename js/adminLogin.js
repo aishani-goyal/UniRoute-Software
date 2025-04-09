@@ -178,6 +178,7 @@ const API_BASE_URL = "https://uniroute-software.onrender.com";
 
 window.sendOTP = async function sendOTP() {
   const phone = document.getElementById("phone").value;
+  localStorage.setItem("userPhone", phone);
   try {
     const res = await fetch(`${API_BASE_URL}/send-otp`, {
       method: "POST",

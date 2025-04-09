@@ -1,5 +1,3 @@
-// Your web app's Firebase configuration
-
 const firebaseConfig = {
   apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
   authDomain: "uniroute-3dda9.firebaseapp.com",
@@ -241,7 +239,7 @@ function loadVehiclesData() {
         tbody.innerHTML = `<tr id="no-vehicles"><td colspan="8" style="text-align:center;">No vehicles found</td></tr>`;
         return;
       }
-      
+
       querySnapshot.forEach((doc) => {
         const data = doc.data();
 
@@ -412,7 +410,6 @@ document.getElementById("save-vehicles").addEventListener("click", () => {
   saveChanges("vehicles-table", vehicles);
 });
 
-
 document.getElementById("add").addEventListener("click", () => {
   document.getElementById("excelFile").click();
 });
@@ -451,7 +448,9 @@ document.getElementById("excelFile").addEventListener("change", (e) => {
     ) {
       uploadVehiclesToFirestore(jsonData); // Vehicles data
     } else {
-      alert("❌ Unknown data format. Please upload a valid Routes or Vehicles sheet.");
+      alert(
+        "❌ Unknown data format. Please upload a valid Routes or Vehicles sheet."
+      );
     }
   };
 
@@ -500,7 +499,8 @@ async function uploadVehiclesToFirestore(data) {
     const cleanedRow = {};
     Object.keys(row).forEach((key) => {
       const trimmedKey = key.trim();
-      const trimmedValue = typeof row[key] === 'string' ? row[key].trim() : row[key];
+      const trimmedValue =
+        typeof row[key] === "string" ? row[key].trim() : row[key];
       cleanedRow[trimmedKey] = trimmedValue;
     });
 
@@ -514,7 +514,15 @@ async function uploadVehiclesToFirestore(data) {
     const status = cleanedRow["status"];
     const docId = String(cleanedRow["ID"]);
 
-    if (!vehicle_no || !vehicle_type || !capacity || !assigned_route || !assigned_driver || !status || !docId) {
+    if (
+      !vehicle_no ||
+      !vehicle_type ||
+      !capacity ||
+      !assigned_route ||
+      !assigned_driver ||
+      !status ||
+      !docId
+    ) {
       console.warn(`⚠ Skipping row ${index + 1} due to missing fields.`);
       return Promise.resolve(); // Skip this row
     }
@@ -546,5 +554,3 @@ async function uploadVehiclesToFirestore(data) {
   alert("✅ Vehicles uploaded successfully!");
   loadVehiclesData();
 }
-
-

@@ -1,317 +1,435 @@
-document.addEventListener("DOMContentLoaded", function () {
-  // User Feedback Analysis (Bar Chart)
-  var ctx1 = document.getElementById("userFeedbackChart").getContext("2d");
+document.addEventListener("DOMContentLoaded", () => {
+  // ✅ Firebase configuration (replace with your actual config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
+    authDomain: "uniroute-3dda9.firebaseapp.com",
+    databaseURL:
+      "https://uniroute-3dda9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "uniroute-3dda9",
+    storageBucket: "uniroute-3dda9.firebasestorage.app",
+    messagingSenderId: "465796690799",
+    appId: "1:465796690799:web:cab2801937f2d4cac7ee9a",
+    measurementId: "G-VWEFWH2517",
+  };
 
-  new Chart(ctx1, {
-    type: "bar",
-    data: {
-      labels: [
-        "Driver Behavior",
-        "Vehicle Speed",
-        "Seating Comfort",
-        "On-Time Service",
-        "Route Availability",
-      ],
-      datasets: [
-        {
-          label: "User Feedback (Higher is Better)",
-          data: [80, 60, 75, 40, 70], // Sample Feedback Scores
-          backgroundColor: [
-            "#4CAF50", // Driver Behavior
-            "#FFC107", // Vehicle Speed
-            "#2196F3", // Seating Comfort
-            "#FF5722", // On-Time Service (Previously Punctuality)
-            "#5bc0f9", // Route Availability
+  // ✅ Initialize Firebase if not already initialized
+  if (!firebase.apps?.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  const db = firebase.firestore();
+  const instituteId = "iEe3BjNAYl4nqKJzCXlH";
+
+  // ✅ Generic function to fetch count and update DOM
+  async function fetchCountAndUpdate(collectionPath, elementId) {
+    try {
+      const snapshot = await db.collection(collectionPath).get();
+      const count = snapshot.size;
+
+      const targetElem = document.getElementById(elementId);
+      if (targetElem) {
+        targetElem.textContent = count;
+      } else {
+        console.warn(`Element with ID '${elementId}' not found in DOM.`);
+      }
+    } catch (error) {
+      console.error(`Error fetching ${collectionPath}:`, error);
+    }
+  }
+
+  // ✅ Fetch counts and update respective HTML elements
+  fetchCountAndUpdate(`institutes/${instituteId}/routes`, "totalRoutes");
+  fetchCountAndUpdate(`institutes/${instituteId}/vehicles`, "activeVehicles");
+  fetchCountAndUpdate(`institutes/${instituteId}/Students`, "totalUsers");
+
+  // ✅ Fetch feedback data and display chart
+  async function fetchFeedbackAndPlotChart() {
+    try {
+      const feedbackCollection = await db.collection("Feedback").get();
+      let total = {
+        driverBehaviour: 0,
+        onTimeService: 0,
+        routeAvailability: 0,
+        seatingComfort: 0,
+        vehicleSpeed: 0,
+      };
+      let count = 0;
+
+      feedbackCollection.forEach((doc) => {
+        const data = doc.data();
+        total.driverBehaviour += data.driverBehaviour || 0;
+        total.onTimeService += data.onTimeService || 0;
+        total.routeAvailability += data.routeAvailability || 0;
+        total.seatingComfort += data.seatingComfort || 0;
+        total.vehicleSpeed += data.vehicleSpeed || 0;
+        count++;
+      });
+
+      if (count === 0) return;
+
+      const averages = {
+        driverBehaviour: total.driverBehaviour / count,
+        onTimeService: total.onTimeService / count,
+        routeAvailability: total.routeAvailability / count,
+        seatingComfort: total.seatingComfort / count,
+        vehicleSpeed: total.vehicleSpeed / count,
+      };
+
+      const ctx = document.getElementById("userFeedbackChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            "Driver Behaviour",
+            "On-Time Service",
+            "Route Availability",
+            "Seating Comfort",
+            "Vehicle Speed",
+          ],
+          datasets: [
+            {
+              label: "Average Rating",
+              data: [
+                averages.driverBehaviour,
+                averages.onTimeService,
+                averages.routeAvailability,
+                averages.seatingComfort,
+                averages.vehicleSpeed,
+              ],
+              backgroundColor: [
+                "rgba(100, 149, 237, 0.8)", // Cornflower Blue
+                "rgba(60, 179, 113, 0.8)", // Medium Sea Green
+                "rgba(255, 165, 0, 0.8)", // Orange
+                "rgba(186, 85, 211, 0.8)", // Medium Orchid
+                "rgba(189, 183, 107, 0.8)", // Dark Khaki
+              ],
+              borderColor: [
+                "rgba(100, 149, 237, 1)",
+                "rgba(60, 179, 113, 1)",
+                "rgba(255, 165, 0, 1)",
+                "rgba(186, 85, 211, 1)",
+                "rgba(189, 183, 107, 1)",
+              ],
+              borderWidth: 2,
+            },
           ],
         },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-          title: {
-            display: true,
-            text: "User Satisfaction Score",
-            font: {
-              size: 15,
-              weight: "bold",
+        options: {
+          plugins: {
+            legend: {
+              labels: {
+                color: "#7f8c8d", // neutral color for label text
+                generateLabels: (chart) => {
+                  return [
+                    {
+                      text: "Average Rating",
+                      fillStyle: "rgba(127, 140, 141, 0.8)",
+                      strokeStyle: "rgba(127, 140, 141, 1)",
+                      lineWidth: 2,
+                      hidden: false,
+                      index: 0,
+                    },
+                  ];
+                },
+              },
             },
-            padding: { bottom: 10 },
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 180,
+            },
           },
         },
-        x: {
-          title: {
-            display: true,
-            text: "Feedback Categories",
-            font: { size: 15, weight: "bold" },
-            padding: { top: 20 }, // Adjust this value as needed
+      });
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+    }
+  }
+
+  fetchFeedbackAndPlotChart();
+
+  //Users with Pending Fee
+  async function fetchFeeStatusAndRenderChart() {
+    try {
+      const studentsRef = db
+        .collection("institutes")
+        .doc("iEe3BjNAYl4nqKJzCXlH")
+        .collection("Students");
+      const snapshot = await studentsRef.get();
+
+      let pendingCount = 0;
+      let paidCount = 0;
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.feeStatus?.toLowerCase() === "pending") {
+          pendingCount++;
+        } else {
+          paidCount++;
+        }
+      });
+
+      const ctx = document.getElementById("pendingFeeChart").getContext("2d");
+
+      new Chart(ctx, {
+        type: "pie",
+        data: {
+          labels: ["Pending Fee", "Paid Fee"],
+          datasets: [
+            {
+              label: "Fee Status",
+              data: [pendingCount, paidCount],
+              backgroundColor: [
+                "rgba(223, 221, 63, 0.91)", // Red for pending
+                "rgba(46, 80, 190, 0.8)", // Teal for paid
+              ],
+              borderColor: [
+                "rgba(223, 221, 63, 0.91)",
+                "rgba(46, 80, 190, 0.8)",
+              ],
+              borderWidth: 2,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                color: "#34495e", // dark gray text
+                font: {
+                  size: 14,
+                },
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label || "";
+                  const value = context.raw;
+                  const total = pendingCount + paidCount;
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${label}: ${value} (${percentage}%)`;
+                },
+              },
+            },
           },
         },
-      },
-      plugins: {
-        legend: {
-          display: false, // Hides legend since the chart is self-explanatory
+      });
+    } catch (error) {
+      console.error("Error fetching student fee data:", error);
+    }
+  }
+
+  fetchFeeStatusAndRenderChart();
+
+  //Route data with bar chart
+  async function fetchRouteWiseDistributionAndRenderChart() {
+    try {
+      const studentsRef = db
+        .collection("institutes")
+        .doc("iEe3BjNAYl4nqKJzCXlH")
+        .collection("Students");
+      const snapshot = await studentsRef.get();
+
+      const routeCounts = {};
+
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const routeNo = data.routeNo || "Unknown";
+
+        routeCounts[routeNo] = (routeCounts[routeNo] || 0) + 1;
+      });
+
+      const sortedRoutes = Object.keys(routeCounts).sort(
+        (a, b) => parseInt(a) - parseInt(b)
+      );
+      const routeData = sortedRoutes.map((route) => routeCounts[route]);
+
+      const ctx = document.getElementById("routeChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: sortedRoutes.map((r) => `Route ${r}`),
+          datasets: [
+            {
+              label: "No. of Passengers",
+              data: routeData,
+              backgroundColor: "rgba(54, 162, 235, 0.7)",
+              borderColor: "rgba(54, 162, 235, 1)",
+              borderWidth: 1,
+            },
+          ],
         },
-        tooltip: {
-          enabled: true,
-        },
-        datalabels: {
-          color: "#000",
-          font: {
-            weight: "bold",
-            size: 15,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { mode: "index", intersect: false },
           },
-          anchor: "center",
-          align: "top",
-          formatter: (value) => value, // Display exact values on top of bars
-        },
-      },
-    },
-    plugins: [ChartDataLabels],
-  });
-
-
-  // Users with Pending Fee (Pie Chart)
-  // Ensure Chart.js and ChartDataLabels plugin are included in your HTML
-  // Ensure Chart.js and ChartDataLabels plugin are included in your HTML
-  var ctx2 = document.getElementById("pendingFeeChart").getContext("2d");
-
-  new Chart(ctx2, {
-    type: "pie",
-    data: {
-      labels: ["Paid", "Pending"],
-      datasets: [
-        {
-          data: [110, 40], // Sample Data (110 Paid, 40 Pending)
-          backgroundColor: ["#4CAF50", "#FF5722"],
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "bottom", // Move legend below the chart
-        },
-        tooltip: {
-          enabled: true,
-        },
-        datalabels: {
-          color: "#ffffff", // White text for better visibility
-          font: {
-            weight: "bold",
-            size: 15,
+          scales: {
+            x: {
+              title: { display: true, text: "Route Number" },
+            },
+            y: {
+              beginAtZero: true,
+              title: { display: true, text: "Passengers" },
+            },
           },
-          formatter: (value) => value, // Show only the number (no percentage)
-          anchor: "center",
-          align: "center",
         },
-      },
-    },
-    plugins: [ChartDataLabels], // Enable data labels inside pie chart
-  });
+      });
+    } catch (error) {
+      console.error("Error fetching route-wise passenger distribution:", error);
+    }
+  }
 
-  // Transport Users Over Semesters (Line Chart)
-  var ctx3 = document.getElementById("semesterTrendChart").getContext("2d");
+  fetchRouteWiseDistributionAndRenderChart();
 
-  new Chart(ctx3, {
+  //Complaints
+  async function loadUserComplaints() {
+    const instituteId = "iEe3BjNAYl4nqKJzCXlH";
+    const studentsRef = db
+      .collection("institutes")
+      .doc(instituteId)
+      .collection("Students");
+    const driversRef = db
+      .collection("institutes")
+      .doc(instituteId)
+      .collection("Drivers");
+    const feedbackRef = db.collection("Feedback");
+    const complaintsTableBody = document.getElementById("complaintsBody");
+    complaintsTableBody.innerHTML = "";
+
+    try {
+      // Step 1: Fetch all drivers once and store by route number
+      const driverSnapshot = await driversRef.get();
+      const routeToDriverName = {};
+
+      driverSnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data.route != null && data.name) {
+          routeToDriverName[data.route.toString()] = data.name;
+        }
+      });
+
+      // Step 2: Fetch all students
+      const studentSnapshot = await studentsRef.get();
+
+      let complaintFound = false; // Track if any complaints exist
+
+      for (const studentDoc of studentSnapshot.docs) {
+        const studentData = studentDoc.data();
+        const { name, routeNo, email } = studentData;
+
+        if (!email) continue;
+
+        const normalizedEmail = email.trim().replace(/\./g, "_");
+        const feedbackDoc = await feedbackRef.doc(normalizedEmail).get();
+
+        if (feedbackDoc.exists) {
+          const feedbackData = feedbackDoc.data();
+          const complaint = (feedbackData.complaint || "").trim();
+
+          if (
+            complaint &&
+            !["no", "n/a", "none"].includes(complaint.toLowerCase())
+          ) {
+            complaintFound = true; // Mark as found
+
+            // Get date
+            let rawTimestamp = feedbackData.timestamp || studentData.timestamp;
+            let complaintDate = "N/A";
+
+            if (rawTimestamp && rawTimestamp.seconds) {
+              complaintDate = new Date(
+                rawTimestamp.seconds * 1000
+              ).toLocaleDateString();
+            }
+
+            // Get driver name from route number
+            const driverName = routeToDriverName[routeNo] || "Unknown Driver";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${name || "Unknown"}</td>
+              <td>${routeNo || "N/A"}</td>
+              <td>${driverName}</td>
+              <td>${complaint}</td>
+              <td>${complaintDate}</td>
+            `;
+            complaintsTableBody.appendChild(row);
+          }
+        }
+      }
+
+      // If no complaints found, show message
+      if (!complaintFound) {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td colspan="5" style="text-align:center; color: grey;">No complaints</td>
+        `;
+        complaintsTableBody.appendChild(row);
+      }
+    } catch (error) {
+      console.error("Error loading complaints:", error);
+    }
+  }
+
+  loadUserComplaints();
+
+  const ctx = document.getElementById("semesterTrendChart").getContext("2d");
+
+  const semesterTrendChart = new Chart(ctx, {
     type: "line",
     data: {
-      labels: [
-        "Odd Sem (2022-23)",
-        "Even Sem (2022-23)",
-        "Odd Sem (2023-24)",
-        "Even Sem (2023-24)",
-      ],
+      labels: ["Sem 1", "Sem 2", "Sem3", "Sem 4", "Sem 5", "Sem 6"],
       datasets: [
         {
-          label: "No. of Transport Users",
-          data: [100, 120, 110, 95], // Sample Data
-          borderColor: "#FF5722",
-          backgroundColor: "rgba(255, 87, 34, 0.2)",
-          fill: true,
-          tension: 0.3, // Adds slight curve to the line
-          pointStyle: "circle",
-          pointRadius: 5,
-          pointBackgroundColor: "#FF5722",
-          pointBorderColor: "#fff",
+          label: "Number of Users",
+          data: [120, 150, 180, 160, 200, 220],
+          fill: false,
+          borderColor: "#007bff",
+          backgroundColor: "#007bff",
+          tension: 0.3,
+          pointBackgroundColor: "#fff",
+          pointBorderColor: "#007bff",
+          pointRadius: 4,
         },
       ],
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: false,
-          suggestedMin: 80, // Ensures the chart doesn't start too low
-          suggestedMax: 140, // Adjust max range for better readability
-          ticks: {
-            stepSize: 10, // Show numbers at intervals of 10
-            callback: function (value) {
-              return value;
-            }, // Display actual values
-          },
-          title: {
-            display: true,
-            text: "No. of Transport Users",
-            font: {
-              size: 15,
-              weight: "bold",
-            },
-            padding: { bottom: 20 },
-          },
-        },
-        x: {
-          title: {
-            display: true,
-            text: "Semesters (Annual Year)",
-            font: {
-              size: 15,
-              weight: "bold",
-            },
-            padding: { top: 20 },
-          },
-        },
-      },
       plugins: {
         legend: {
           display: true,
+          position: "top",
         },
         tooltip: {
-          enabled: true,
+          mode: "index",
+          intersect: false,
         },
       },
-    },
-  });
-
-
-
-  // Route-Wise Passenger Distribution (Bar Chart)
-  // Ensure Chart.js and ChartDataLabels plugin are included in your HTML
-  var ctx4 = document.getElementById("routeChart").getContext("2d");
-
-  new Chart(ctx4, {
-    type: "bar",
-    data: {
-      labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], // Route numbers
-      datasets: [
-        {
-          label: "Passengers",
-          data: [43, 36, 28, 27, 26, 26, 24, 20, 11, 10], // Sample Data
-          backgroundColor: [
-            "#3F51B5",
-            "#009688",
-            "#FF9800",
-            "#E91E63",
-            "#9C27B0",
-            "#2196F3",
-            "#8BC34A",
-            "#FF5722",
-            "#795548",
-            "#607D8B",
-          ],
-          borderRadius: 5,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      interaction: {
+        mode: "nearest",
+        axis: "x",
+        intersect: false,
+      },
       scales: {
-        x: {
-          title: {
-            display: true,
-            text: "Routes", // X-axis label
-            font: {
-              size: 15,
-              weight: "bold",
-            },
-            padding: { top: 20 },
-          },
-        },
         y: {
           beginAtZero: true,
           title: {
             display: true,
-            text: "Transport Users", // Y-axis label
-            font: {
-              size: 15,
-              weight: "bold",
-            },
-            padding: { bottom: 10 },
-          },
-          ticks: {
-            stepSize: 10,
+            text: "Users",
           },
         },
-      },
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          enabled: true,
-        },
-        datalabels: {
-          anchor: "center", // Position text inside the bar
-          align: "center",
-          formatter: (value) => value, // Display the exact number
-          color: "#ffffff", // White text for better contrast
-          font: {
-            weight: "bold",
-            size: 14,
+        x: {
+          title: {
+            display: true,
+            text: "Semester",
           },
         },
       },
     },
-    plugins: [ChartDataLabels], // Enable data labels inside bars
   });
 });
-
-document.addEventListener("DOMContentLoaded", function () {
-  // Sample complaints data (Replace this with data from your backend)
-  const complaints = [
-    {
-      user: "Prachi Gupta",
-      routeNo: "4",
-      routeName: "Mansarovar-Sodala",
-      complaint: "Daily Bus Delay",
-      date: "2024-03-23",
-    },
-    {
-      user: "Amit Sharma",
-      routeNo: "2",
-      routeName: "Triveni Nagar-Jklu",
-      complaint: "Daily change of bus",
-      date: "2024-03-22",
-    },
-    {
-      user: "Mahi Sen",
-      routeNo: "7",
-      routeName: "Murlipura-Jklu",
-      complaint: "Bus capacity less than total bus users",
-      date: "2024-03-21",
-    },
-  ];
-
-  // Populate the complaints table
-  const complaintsBody = document.getElementById("complaintsBody");
-  complaints.forEach((item) => {
-    const row = `<tr>
-                        <td>${item.user}</td>
-                        <td>${item.routeNo}</td>
-                        <td>${item.routeName}</td>
-                        <td>${item.complaint}</td>
-                        <td>${item.date}</td>
-                    </tr>`;
-    complaintsBody.innerHTML += row;
-  });
-});
-
-

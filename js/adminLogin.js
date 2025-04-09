@@ -39,6 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
       role === "student" || role === "authority" ? "block" : "none";
     mobileOtpFields.style.display = role === "driver" ? "block" : "none";
     adminFields.style.display = role === "admin" ? "block" : "none";
+
+    if (role === "driver") {
+      loginBtn.textContent = "Verify and Login";
+      loginBtn.setAttribute("onclick", "verifyOTP()");
+    } else {
+      loginBtn.textContent = "Login";
+      loginBtn.removeAttribute("onclick");
+    }
   });
 
   const loginForm = document.getElementById("loginForm");
@@ -65,23 +73,38 @@ async function studentAuthorityLogin(role) {
 
   if (userId && password) {
     // Query Firestore
-    const userRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "User_password");
+    const userRef = collection(
+      db,
+      "institutes",
+      "iEe3BjNAYl4nqKJzCXlH",
+      "User_password"
+    );
     const q = query(userRef, where("email", "==", userId));
-    
+
     try {
       const querySnapshot = await getDocs(q);
-      
+
       // Debugging: Log the querySnapshot to see the returned data
       console.log(querySnapshot);
-      
+
       if (!querySnapshot.empty) {
         querySnapshot.forEach((doc) => {
           const storedCredentials = doc.data();
           console.log(storedCredentials); // Debugging: Log the stored credentials
 
           // Check credentials
-          if (storedCredentials.email === userId && storedCredentials.password === password) {
-            alert(`${role.charAt(0).toUpperCase() + role.slice(1)} Login Successful!`);
+          if (
+            storedCredentials.email === userId &&
+            storedCredentials.password === password
+          ) {
+            // Save email in localStorage
+            localStorage.setItem("loggedInEmail", userId);
+
+            alert(
+              `${
+                role.charAt(0).toUpperCase() + role.slice(1)
+              } Login Successful!`
+            );
             window.location.href = `Responsive Student Dashboeard/home.html`;
           } else {
             alert("⚠ Invalid email ID or password!");
@@ -100,28 +123,15 @@ async function studentAuthorityLogin(role) {
 }
 
 
-// 5. Driver Login
-function driverLogin() {
-  let mobileNumber = document.getElementById("mobileNumber").value;
-  let otp = document.getElementById("otp").value;
-
-  if (mobileNumber && otp) {
-    alert("✅ Driver Login Successful!");
-    window.location.href = "Responsive Driver Dashboard/driver.html";
-  } else {
-    alert("⚠ Invalid OTP!");
-  }
-}
-
 // 6. Admin Login Function
 async function adminLogin() {
   const adminEmail = document.getElementById("adminEmail").value.trim();
   const adminPassword = document.getElementById("adminPassword").value.trim();
 
-   if (!adminEmail || !adminPassword) {
-     alert("⚠ Please enter both Email and Password!");
-     return; // Stop function execution if fields are empty
-   }
+  if (!adminEmail || !adminPassword) {
+    alert("⚠ Please enter both Email and Password!");
+    return; // Stop function execution if fields are empty
+  }
 
   try {
     const institutesRef = collection(db, "institutes");
@@ -154,8 +164,7 @@ async function adminLogin() {
 
     if (foundAdminData.password === adminPassword) {
       alert("✅ Admin Login Successful!");
-      window.location.href =
-        "Admin_Panel/admin_home.html";
+      window.location.href = "Admin_Panel/admin_home.html";
     } else {
       alert("⚠ Invalid Email or Password!");
     }
@@ -164,3 +173,57 @@ async function adminLogin() {
     alert("⚠ Error during login. Try again.");
   }
 }
+
+const API_BASE_URL = "http://127.0.0.1:5000";
+
+window.sendOTP = async function sendOTP() {
+  const phone = document.getElementById("phone").value;
+  try {
+    const res = await fetch(`${API_BASE_URL}/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone }),
+      credentials: "include",
+    });
+
+    const responseText = await res.text();
+    if (!responseText) {
+      alert("No response from server.");
+      return;
+    }
+    const data = JSON.parse(responseText);
+    alert(data.message);
+  } catch (error) {
+    console.error("Error during sendOTP:", error);
+    alert("Failed to send OTP. Check console for details.");
+  }
+};
+
+window.verifyOTP = async function verifyOTP() {
+  const otp = document.getElementById("otp").value;
+  try {
+    const res = await fetch(`${API_BASE_URL}/verify-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ otp }),
+      credentials: "include",
+    });
+
+    const responseText = await res.text();
+    if (!responseText) {
+      alert("No response from server.");
+      return;
+    }
+    const data = JSON.parse(responseText);
+    alert(data.message);
+
+    // Redirect if OTP verification is successful
+    if (data.success) {
+      window.location.href = "Responsive Driver Dashboard/driver.html";
+    }
+  } catch (error) {
+    console.error("Error during verifyOTP:", error);
+    alert("Failed to verify OTP. Check console for details.");
+  }
+};
+

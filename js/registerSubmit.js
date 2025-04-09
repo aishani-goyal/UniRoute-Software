@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", function () {
   const steps = document.querySelectorAll(".form-step");
   const nextBtns = document.querySelectorAll(".next-btn");

@@ -1,3 +1,24 @@
+// Add hovered class to selected list item
+let list = document.querySelectorAll(".navigation li");
+
+function activeLink() {
+  list.forEach((item) => {
+    item.classList.remove("hovered");
+  });
+  this.classList.add("hovered");
+}
+
+list.forEach((item) => item.addEventListener("mouseover", activeLink));
+
+// Menu Toggle
+let toggle = document.querySelector(".toggle");
+let navigation = document.querySelector(".navigation");
+let main = document.querySelector(".main");
+
+toggle.onclick = function () {
+  navigation.classList.toggle("active");
+  main.classList.toggle("active");
+};
 
 const firebaseConfig = {
   apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
@@ -36,13 +57,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("no-students")) {
       document.getElementById("no-students").remove();
     }
-  
+
     const id = student.studentId ? parseInt(student.studentId) : getNextId();
     usedIds.add(id);
-  
+
     const uniqueId = docId || `student-${Date.now()}`;
     const isNew = !student.studentId;
-  
+
     const row = document.createElement("tr");
     row.setAttribute("data-id", uniqueId);
     row.innerHTML = `
@@ -51,30 +72,39 @@ document.addEventListener("DOMContentLoaded", () => {
       <td contenteditable="${isNew}">${student.roll || "Enter Roll No."}</td>
       <td contenteditable="${isNew}">${student.email || "Enter Email"}</td>
       <td contenteditable="${isNew}">${student.contact || "Enter Contact"}</td>
-      <td contenteditable="${isNew}">${student.routeNo || "Enter Route No."}</td>
+      <td contenteditable="${isNew}">${
+      student.routeNo || "Enter Route No."
+    }</td>
+    <td contenteditable="${isNew}">${student.feeStatus || "Pending"}</td>
       <td>
         <button class="edit"><i class="far fa-edit"></i></button>
         <button class="delete"><i class="fas fa-trash"></i></button>
-        <button class="send" data-student-id="${id}" data-email="${student.email}">
+        <button class="send" data-student-id="${id}" data-email="${
+      student.email
+    }">
         <i class="fas fa-paper-plane"></i>
       </button>
       </td>
     `;
-  
+
     const editBtn = row.querySelector(".edit");
     const deleteBtn = row.querySelector(".delete");
-  
+
     editBtn.addEventListener("click", async () => {
-        const editableCells = row.querySelectorAll("td[contenteditable]");
-        const isEditing = editBtn.classList.contains("editing");
-      
-        if (!isEditing) {
-          // 🔒 Lock all other rows and reset their buttons
-          document.querySelectorAll("#students-table tbody tr").forEach((otherRow) => {
+      const editableCells = row.querySelectorAll("td[contenteditable]");
+      const isEditing = editBtn.classList.contains("editing");
+
+      if (!isEditing) {
+        // 🔒 Lock all other rows and reset their buttons
+        document
+          .querySelectorAll("#students-table tbody tr")
+          .forEach((otherRow) => {
             if (otherRow !== row) {
-              otherRow.querySelectorAll("td[contenteditable]").forEach(cell => {
-                cell.setAttribute("contenteditable", "false");
-              });
+              otherRow
+                .querySelectorAll("td[contenteditable]")
+                .forEach((cell) => {
+                  cell.setAttribute("contenteditable", "false");
+                });
               const otherEditBtn = otherRow.querySelector(".edit");
               if (otherEditBtn) {
                 otherEditBtn.innerHTML = '<i class="far fa-edit"></i>';
@@ -82,55 +112,57 @@ document.addEventListener("DOMContentLoaded", () => {
               }
             }
           });
-      
-          // ✅ Make current row editable
-          editableCells.forEach(cell => cell.setAttribute("contenteditable", "true"));
-          editBtn.innerHTML = '<i class="fas fa-save"></i>';
-          editBtn.classList.add("editing");
-      
-        } else {
-          // ✅ Collect updated data
-          const studentId = row.cells[0].innerText.trim();
-          const student = {
-            studentId: studentId,
-            name: row.cells[1].innerText.trim(),
-            roll: row.cells[2].innerText.trim(),
-            email: row.cells[3].innerText.trim(),
-            contact: row.cells[4].innerText.trim(),
-            routeNo: row.cells[5].innerText.trim(),
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          };
-      
-          if (Object.values(student).some(val => !val)) {
-            alert("⚠ Please fill all fields before saving.");
-            return;
-          }
-      
-          try {
-            await studentsRef.doc(studentId).set(student);
-            // 🔒 Lock row and switch icon back
-            editableCells.forEach(cell => cell.setAttribute("contenteditable", "false"));
-            editBtn.innerHTML = '<i class="far fa-edit"></i>';
-            editBtn.classList.remove("editing");
-      
-            alert("✅ Student updated.");
-          } catch (err) {
-            console.error("Save error:", err);
-            alert("❌ Error updating student.");
-          }
+
+        // ✅ Make current row editable
+        editableCells.forEach((cell) =>
+          cell.setAttribute("contenteditable", "true")
+        );
+        editBtn.innerHTML = '<i class="fas fa-save"></i>';
+        editBtn.classList.add("editing");
+      } else {
+        // ✅ Collect updated data
+        const studentId = row.cells[0].innerText.trim();
+        const student = {
+          studentId: studentId,
+          name: row.cells[1].innerText.trim(),
+          roll: row.cells[2].innerText.trim(),
+          email: row.cells[3].innerText.trim(),
+          contact: row.cells[4].innerText.trim(),
+          routeNo: row.cells[5].innerText.trim(),
+          feestatus: row.cells[6].innerText.trim(),
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        };
+
+        if (Object.values(student).some((val) => !val)) {
+          alert("⚠ Please fill all fields before saving.");
+          return;
         }
-      });
-      
-      
-  
+
+        try {
+          await studentsRef.doc(studentId).set(student);
+          // 🔒 Lock row and switch icon back
+          editableCells.forEach((cell) =>
+            cell.setAttribute("contenteditable", "false")
+          );
+          editBtn.innerHTML = '<i class="far fa-edit"></i>';
+          editBtn.classList.remove("editing");
+
+          alert("✅ Student updated.");
+        } catch (err) {
+          console.error("Save error:", err);
+          alert("❌ Error updating student.");
+        }
+      }
+    });
+
     deleteBtn.addEventListener("click", async () => {
       const idToRemove = parseInt(row.cells[0].innerText.trim());
       const confirmDel = confirm("Delete this student?");
       if (!confirmDel) return;
-  
+
       usedIds.delete(idToRemove);
       row.remove();
-  
+
       if (docId) {
         try {
           await studentsRef.doc(docId).delete();
@@ -141,25 +173,51 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
-  
+
     studentsTable.appendChild(row);
     row.scrollIntoView({ behavior: "smooth" });
   }
-  
 
   async function loadStudents() {
     try {
       const snapshot = await studentsRef.orderBy("studentId").get();
+      const students = [];
+
       if (snapshot.empty) {
         studentsTable.innerHTML = `<tr id="no-students"><td colspan="8" style="text-align:center">No students found.</td></tr>`;
         return;
       }
 
+      // Step 1: Prepare all students first
       snapshot.forEach((doc) => {
         const data = doc.data();
         usedIds.add(parseInt(data.studentId));
-        createRow(data, doc.id);
+        students.push({ ...data, docId: doc.id });
       });
+
+      // Step 2: Fetch Fees status for each student
+      const feeChecks = await Promise.all(
+        students.map(async (student) => {
+          try {
+            const feeDoc = await db.collection("Fees").doc(student.docId).get();
+            if (feeDoc.exists) {
+              const feeData = feeDoc.data();
+              if (feeData.status === "Paid") {
+                student.feeStatus = "Paid"; // Only set to Paid if it really is
+              } else {
+                student.feeStatus = "Pending";
+              }
+            }
+          } catch (err) {
+            console.warn("Error checking Fees for", student.docId, err);
+          }
+          return student;
+        })
+      );
+
+      // Step 3: Clear table & append all rows together
+      studentsTable.innerHTML = ""; // clear old rows
+      feeChecks.forEach((student) => createRow(student, student.docId));
     } catch (err) {
       console.error("Load error:", err);
     }
@@ -170,10 +228,10 @@ document.addEventListener("DOMContentLoaded", () => {
   saveBtn.addEventListener("click", async () => {
     const rows = studentsTable.querySelectorAll("tr");
     if (rows.length === 0) return alert("Add some students first.");
-  
+
     const batch = db.batch();
     let hasError = false;
-  
+
     rows.forEach((row) => {
       const studentId = row.cells[0].innerText.trim();
       const student = {
@@ -183,37 +241,37 @@ document.addEventListener("DOMContentLoaded", () => {
         email: row.cells[3].innerText.trim(),
         contact: row.cells[4].innerText.trim(),
         routeNo: row.cells[5].innerText.trim(),
+        feeStatus: row.cells[6].innerText.trim(),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       };
-  
+
       if (Object.values(student).some((val) => !val)) {
         alert("⚠ Fill all fields before saving.");
         hasError = true;
         return;
       }
-  
+
       batch.set(studentsRef.doc(studentId), student);
     });
-  
+
     if (hasError) return;
-  
+
     try {
       await batch.commit();
       alert("✅ Students saved!");
-  
+
       // Disable editing after saving
       rows.forEach((row) => {
         const editableCells = row.querySelectorAll("td[contenteditable]");
-        editableCells.forEach((cell) => cell.setAttribute("contenteditable", "false"));
+        editableCells.forEach((cell) =>
+          cell.setAttribute("contenteditable", "false")
+        );
       });
-  
     } catch (err) {
       console.error("Save error:", err);
       alert("❌ Error saving.");
     }
   });
-  
-  
 
   uploadBtn.addEventListener("click", () => fileInput.click());
 
@@ -237,7 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
         "Roll No." in first &&
         "Email" in first &&
         "Contact No." in first &&
-        "Route No." in first
+        "Route No." in first &&
+        "Fee Status" in first
       ) {
         uploadToFirestore(jsonData);
       } else {
@@ -258,20 +317,19 @@ document.addEventListener("DOMContentLoaded", () => {
         email: String(row["Email"] || "").trim(),
         contact: String(row["Contact No."] || "").trim(),
         routeNo: String(row["Route No."] || "").trim(),
+        feeStatus: String(row["Fee Status"] || "").trim(),
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       };
       return studentsRef.doc(student.studentId).set(student);
     });
-  
+
     await Promise.all(uploads);
     alert("✅ Excel uploaded.");
     setTimeout(loadStudents, 1000);
   }
-  
 
   loadStudents();
 });
-
 
 // ✅ Custom password generator using first name and full roll
 function createCustomPassword(name, roll) {
@@ -340,19 +398,19 @@ document.addEventListener("click", async function (e) {
         .set({
           email: email,
           password: password,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
 
       // ✅ Step 5: Send email via Flask API
       const res = await fetch("http://127.0.0.1:5000/send-password", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: email,
-          password: password
-        })
+          password: password,
+        }),
       });
 
       const result = await res.json();

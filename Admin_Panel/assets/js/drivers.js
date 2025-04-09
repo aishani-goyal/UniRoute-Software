@@ -1,3 +1,24 @@
+// Add hovered class to selected list item
+let list = document.querySelectorAll(".navigation li");
+
+function activeLink() {
+  list.forEach((item) => {
+    item.classList.remove("hovered");
+  });
+  this.classList.add("hovered");
+}
+
+list.forEach((item) => item.addEventListener("mouseover", activeLink));
+
+// Menu Toggle
+let toggle = document.querySelector(".toggle");
+let navigation = document.querySelector(".navigation");
+let main = document.querySelector(".main");
+
+toggle.onclick = function () {
+  navigation.classList.toggle("active");
+  main.classList.toggle("active");
+};
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
@@ -40,7 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const isNew = !driver;
-    const currentDriverId = driver ? parseInt(driver.driverId) : getSmallestAvailableId();
+    const currentDriverId = driver
+      ? parseInt(driver.driverId)
+      : getSmallestAvailableId();
     if (isNew) usedIds.add(currentDriverId);
 
     const uniqueId = docId || `driver-${Date.now()}`;
@@ -51,10 +74,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     row.innerHTML = `
       <td>${currentDriverId}</td>
-      <td><input type="text" class="driver-name" value="${driver ? driver.name : ""}" ${disabledAttr}></td>
-      <td><input type="text" class="contact-number" value="${driver ? driver.contact : ""}" ${disabledAttr}></td>
-      <td><input type="text" class="assigned-vehicle" value="${driver ? driver.vehicle : ""}" ${disabledAttr}></td>
-      <td><input type="text" class="assigned-route" value="${driver ? driver.route : ""}" ${disabledAttr}></td>
+      <td><input type="text" class="driver-name" value="${
+        driver ? driver.name : ""
+      }" ${disabledAttr}></td>
+      <td><input type="text" class="contact-number" value="${
+        driver ? driver.contact : ""
+      }" ${disabledAttr}></td>
+      <td><input type="text" class="assigned-vehicle" value="${
+        driver ? driver.vehicle : ""
+      }" ${disabledAttr}></td>
+      <td><input type="text" class="assigned-route" value="${
+        driver ? driver.route : ""
+      }" ${disabledAttr}></td>
       <td>
         <button class="edit"><i class="far fa-edit"></i></button>
         <button class="delete"><i class="fas fa-trash"></i></button>
@@ -73,13 +104,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     deleteButton.addEventListener("click", async function () {
       const idToRemove = parseInt(row.cells[0].innerText.trim());
-    
-      const confirmation = confirm("❗ Are you sure you want to delete this driver?");
+
+      const confirmation = confirm(
+        "❗ Are you sure you want to delete this driver?"
+      );
       if (!confirmation) return; // ❌ Stop if user cancels
-    
+
       usedIds.delete(idToRemove);
       row.remove();
-    
+
       if (docId) {
         try {
           await driversRef.doc(docId).delete();
@@ -91,7 +124,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     });
-    
 
     row.scrollIntoView({ behavior: "smooth", block: "center" });
   }
@@ -149,7 +181,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const inputs = row.querySelectorAll("input");
         inputs.forEach((input) => input.setAttribute("disabled", true));
       });
-
     } catch (error) {
       console.error("Error saving drivers:", error);
       alert("Error saving drivers. Please try again.");
@@ -178,10 +209,12 @@ document.addEventListener("DOMContentLoaded", function () {
   loadDrivers();
 });
 
-
 document.addEventListener("DOMContentLoaded", () => {
   const db = firebase.firestore();
-  const driversRef = db.collection("institutes").doc("iEe3BjNAYl4nqKJzCXlH").collection("Drivers");
+  const driversRef = db
+    .collection("institutes")
+    .doc("iEe3BjNAYl4nqKJzCXlH")
+    .collection("Drivers");
   const driversTable = document.querySelector("#drivers-table tbody");
 
   const usedIds = new Set();
@@ -233,7 +266,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const cleanedRow = {};
       Object.keys(row).forEach((key) => {
         const trimmedKey = key.trim();
-        const trimmedValue = typeof row[key] === "string" ? row[key].trim() : row[key];
+        const trimmedValue =
+          typeof row[key] === "string" ? row[key].trim() : row[key];
         cleanedRow[trimmedKey] = trimmedValue;
       });
 
@@ -278,68 +312,72 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-const vendorRef = db.collection("institutes").doc("iEe3BjNAYl4nqKJzCXlH").collection("Vendors").doc("mainVendor");
+const vendorRef = db
+  .collection("institutes")
+  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .collection("Vendors")
+  .doc("mainVendor");
 
-  const inputs = {
-    companyName: document.getElementById("company-name"),
-    ownerName: document.getElementById("owner-name"),
-    contact: document.getElementById("vendor-contact"),
-    email: document.getElementById("vendor-email"),
-    address: document.getElementById("vendor-address"),
+const inputs = {
+  companyName: document.getElementById("company-name"),
+  ownerName: document.getElementById("owner-name"),
+  contact: document.getElementById("vendor-contact"),
+  email: document.getElementById("vendor-email"),
+  address: document.getElementById("vendor-address"),
+};
+
+const editBtn = document.getElementById("edit-vendor");
+const saveBtn = document.getElementById("save-vendor");
+
+// 🔒 Disable or enable all fields
+function setInputsDisabled(disabled) {
+  Object.values(inputs).forEach((input) => {
+    input.disabled = disabled;
+  });
+}
+
+// ✏️ Edit Button
+editBtn.addEventListener("click", () => {
+  setInputsDisabled(false);
+});
+
+// 💾 Save Button
+saveBtn.addEventListener("click", async () => {
+  const vendorData = {
+    companyName: inputs.companyName.value.trim(),
+    ownerName: inputs.ownerName.value.trim(),
+    contact: inputs.contact.value.trim(),
+    email: inputs.email.value.trim(),
+    address: inputs.address.value.trim(),
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
   };
 
-  const editBtn = document.getElementById("edit-vendor");
-  const saveBtn = document.getElementById("save-vendor");
-
-  // 🔒 Disable or enable all fields
-  function setInputsDisabled(disabled) {
-    Object.values(inputs).forEach((input) => {
-      input.disabled = disabled;
-    });
+  try {
+    await vendorRef.set(vendorData);
+    alert("✅ Vendor details saved successfully!");
+    setInputsDisabled(true);
+  } catch (error) {
+    console.error("❌ Error saving vendor data:", error);
+    alert("❌ Failed to save vendor details.");
   }
+});
 
-  // ✏️ Edit Button
-  editBtn.addEventListener("click", () => {
-    setInputsDisabled(false);
-  });
-
-  // 💾 Save Button
-  saveBtn.addEventListener("click", async () => {
-    const vendorData = {
-      companyName: inputs.companyName.value.trim(),
-      ownerName: inputs.ownerName.value.trim(),
-      contact: inputs.contact.value.trim(),
-      email: inputs.email.value.trim(),
-      address: inputs.address.value.trim(),
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-    };
-
-    try {
-      await vendorRef.set(vendorData);
-      alert("✅ Vendor details saved successfully!");
-      setInputsDisabled(true);
-    } catch (error) {
-      console.error("❌ Error saving vendor data:", error);
-      alert("❌ Failed to save vendor details.");
+// 🔁 Load Existing Vendor Data
+async function loadVendor() {
+  try {
+    const doc = await vendorRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      inputs.companyName.value = data.companyName || "";
+      inputs.ownerName.value = data.ownerName || "";
+      inputs.contact.value = data.contact || "";
+      inputs.email.value = data.email || "";
+      inputs.address.value = data.address || "";
     }
-  });
-
-  // 🔁 Load Existing Vendor Data
-  async function loadVendor() {
-    try {
-      const doc = await vendorRef.get();
-      if (doc.exists) {
-        const data = doc.data();
-        inputs.companyName.value = data.companyName || "";
-        inputs.ownerName.value = data.ownerName || "";
-        inputs.contact.value = data.contact || "";
-        inputs.email.value = data.email || "";
-        inputs.address.value = data.address || "";
-      }
-    } catch (error) {
-      console.error("❌ Error loading vendor:", error);
-    }
+  } catch (error) {
+    console.error("❌ Error loading vendor:", error);
   }
+}
 
-  // 🚀 Load data on page load
-  document.addEventListener("DOMContentLoaded", loadVendor);
+// 🚀 Load data on page load
+document.addEventListener("DOMContentLoaded", loadVendor);

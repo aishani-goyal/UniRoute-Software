@@ -1,68 +1,141 @@
+// Add hovered class to selected list item
+let list = document.querySelectorAll(".navigation li");
+
+function activeLink() {
+  list.forEach((item) => {
+    item.classList.remove("hovered");
+  });
+  this.classList.add("hovered");
+}
+
+list.forEach((item) => item.addEventListener("mouseover", activeLink));
+
+// Menu Toggle
+let toggle = document.querySelector(".toggle");
+let navigation = document.querySelector(".navigation");
+let main = document.querySelector(".main");
+
+toggle.onclick = function () {
+  navigation.classList.toggle("active");
+  main.classList.toggle("active");
+};
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+} from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
 
-// Firebase configuration
+// Firebase config
 const firebaseConfig = {
-    apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
-    authDomain: "uniroute-3dda9.firebaseapp.com",
-    projectId: "uniroute-3dda9",
-    storageBucket: "uniroute-3dda9.appspot.com",
-    messagingSenderId: "465796690799",
-    appId: "1:465796690799:web:cab2801937f2d4cac7ee9a",
-    measurementId: "G-VWEFWH2517"
+  apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
+  authDomain: "uniroute-3dda9.firebaseapp.com",
+  projectId: "uniroute-3dda9",
+  storageBucket: "uniroute-3dda9.appspot.com",
+  messagingSenderId: "465796690799",
+  appId: "1:465796690799:web:cab2801937f2d4cac7ee9a",
+  measurementId: "G-VWEFWH2517",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Reference Firestore collection
-const feesCollection = collection(db, 'Fees');
-
-// Get elements
+// Get HTML elements
+const studentNameEl = document.getElementById("student-name");
+const studentEmailEl = document.getElementById("student-email");
+const feeAmountEl = document.getElementById("fee-amount");
+const feeStatusEl = document.getElementById("fee-status");
 const payButton = document.getElementById("pay-now");
-const studentName = document.getElementById("student-name").innerText.trim();
-const studentEmail = document.getElementById("student-email").innerText.trim();
-const feeAmount = document.getElementById("fee-amount").innerText.trim();
-const feeStatus = document.getElementById("fee-status");
 
-// Replace with your actual UPI ID
-const upiID = "7014253314@pytes"; 
+// Get logged-in email from localStorage
+const loggedInEmail = localStorage.getItem("loggedInEmail");
+let studentId = null;
 
-// Generate UPI Payment Link
-const upiURL = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(studentName)}&am=${feeAmount}&cu=INR&tn=Fee Payment`;
+// Amount (can also be fetched dynamically)
+const feeAmount = "5000";
+feeAmountEl.innerText = feeAmount;
 
-// Payment Processing
+// Step 1: Fetch Student Info
+async function loadStudentData() {
+  const studentsRef = collection(
+    db,
+    "institutes/iEe3BjNAYl4nqKJzCXlH/Students"
+  );
+  const q = query(studentsRef, where("email", "==", loggedInEmail));
+  const querySnapshot = await getDocs(q);
+
+  if (!querySnapshot.empty) {
+    const docData = querySnapshot.docs[0].data();
+    studentNameEl.innerText = docData.name;
+    studentEmailEl.innerText = docData.email;
+    studentId = docData.studentId;
+
+    checkAndUpdatePaymentStatus(docData.name, docData.email, studentId);
+  } else {
+    alert("Student not found!");
+  }
+}
+
+// Step 2: Check Payment Status & Update UI
+async function checkAndUpdatePaymentStatus(name, email, studentId) {
+  const feeDocRef = doc(db, "Fees", studentId);
+  const feeSnap = await getDoc(feeDocRef);
+
+  if (feeSnap.exists() && feeSnap.data().status === "Paid") {
+    feeStatusEl.innerText = "Paid";
+    feeStatusEl.classList.remove("pending");
+    feeStatusEl.classList.add("paid");
+  } else {
+    feeStatusEl.innerText = "Pending";
+    feeStatusEl.classList.remove("paid");
+    feeStatusEl.classList.add("pending");
+  }
+}
+
+// Step 3: Handle Payment Button Click
 payButton.addEventListener("click", async () => {
-    try {
-        // Save payment details to Firebase before redirection
-        await addDoc(feesCollection, {
-            name: studentName,
-            email: studentEmail,
-            amount: feeAmount,
-            status: "Pending",
-            timestamp: serverTimestamp()
-        });
+  if (!studentId) {
+    alert("Student not loaded yet!");
+    return;
+  }
 
-        alert("Payment record saved. Redirecting to UPI Payment...");
+  const name = studentNameEl.innerText;
+  const email = studentEmailEl.innerText;
+  const upiID = "7014253314@pytes";
 
-        // Set Status to Processing
-        feeStatus.innerText = "Processing...";
-        feeStatus.classList.remove("pending");
-        feeStatus.classList.add("processing");
+  // Save payment record with status "Pending"
+  const feeDocRef = doc(db, "Fees", studentId);
+  await setDoc(feeDocRef, {
+    name,
+    email,
+    amount: feeAmount,
+    status: "Pending",
+    timestamp: new Date(),
+  });
 
-        // For desktop, try redirecting to Paytm website instead of using the UPI link directly
-        let paytmURL = `https://paytm.com/upi/payment?pa=${upiID}&pn=${encodeURIComponent(studentName)}&am=${feeAmount}&cu=INR&tn=Fee Payment`;
+  alert("Redirecting to Paytm...");
 
-        // Introduce a slight delay before redirecting
-        setTimeout(() => {
-            // Redirect to Paytm payment page
-            window.location.href = paytmURL;
-        }, 1000); // Wait for 1 second before redirecting
-    } catch (error) {
-        console.error("Error adding document: ", error);
-        alert("Failed to record payment. Please try again.");
-    }
+  // Update UI
+  feeStatusEl.innerText = "Processing...";
+  feeStatusEl.classList.remove("pending");
+  feeStatusEl.classList.add("processing");
+
+  // Redirect
+  const paytmURL = `https://paytm.com/upi/payment?pa=${upiID}&pn=${encodeURIComponent(
+    name
+  )}&am=${feeAmount}&cu=INR&tn=Fee Payment`;
+  setTimeout(() => {
+    window.location.href = paytmURL;
+  }, 1000);
 });
 
+// Initialize everything
+loadStudentData();

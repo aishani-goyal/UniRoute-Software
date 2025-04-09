@@ -174,7 +174,7 @@ async function adminLogin() {
   }
 }
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL = "https://uniroute-software.onrender.com";
 
 window.sendOTP = async function sendOTP() {
   const phone = document.getElementById("phone").value;

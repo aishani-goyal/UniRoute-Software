@@ -402,16 +402,19 @@ document.addEventListener("click", async function (e) {
         });
 
       // ✅ Step 5: Send email via Flask API
-      const res = await fetch("http://127.0.0.1:5000/send-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+      const res = await fetch(
+        "https://uniroute-software.onrender.com/send-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        }
+      );
 
       const result = await res.json();
 

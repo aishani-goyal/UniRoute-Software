@@ -7,6 +7,8 @@ from twilio.rest import Client
 import random
 import logging
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__, static_url_path='', static_folder='.')
@@ -23,9 +25,9 @@ SENDER_EMAIL = "bhoomimehta2004@gmail.com"
 SENDER_PASSWORD = "ckkf cyjx qqjv mlzc"
 
 # Twilio Configuration
-account_sid = 'AC6b7edbb3424794359b2af46257b995e7'
-auth_token = '30a8e5c3956dfc44071f0c296ba5e6a0'
-twilio_number = '+19203108262'
+account_sid = os.getenv('TWILIO_SID')
+auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+twilio_number = os.getenv('TWILIO_PHONE_NUMBER')
 client = Client(account_sid, auth_token)
 
 # Send OTP via Twilio

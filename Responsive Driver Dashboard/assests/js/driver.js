@@ -25,10 +25,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebas
 import {
   getFirestore,
   doc,
-  collection,
-  getDocs,
-  query,
-  where,
   setDoc,
   deleteDoc,
 } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
@@ -143,55 +139,55 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Location tracking is not active.");
       }
     });
-  async function countStudentsOnDriverRoute() {
-    const phone = localStorage.getItem("userPhone");
-    if (!phone) {
-      console.error("Phone number not found in localStorage.");
-      return;
-    }
-
-    // 1. Get the driver with matching contact number
-    const driversRef = collection(
-      db,
-      "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
-      "Drivers"
-    );
-    const driverQuery = query(driversRef, where("contact", "==", phone));
-    const driverSnapshot = await getDocs(driverQuery);
-
-    if (driverSnapshot.empty) {
-      console.error("No driver found with this phone number.");
-      return;
-    }
-
-    let driverRoute = null;
-    driverSnapshot.forEach((doc) => {
-      driverRoute = doc.data().route;
-    });
-
-    if (!driverRoute) {
-      console.error("Driver route not found.");
-      return;
-    }
-
-    // 2. Find students with matching route number
-    const studentsRef = collection(
-      db,
-      "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
-      "Students"
-    );
-    const studentQuery = query(
-      studentsRef,
-      where("routeNo", "==", String(driverRoute))
-    );
-    const studentSnapshot = await getDocs(studentQuery);
-
-    const totalStudents = studentSnapshot.size;
-    document.getElementById("total-students").innerText = totalStudents;
+});
+async function countStudentsOnDriverRoute() {
+  const phone = localStorage.getItem("userPhone");
+  if (!phone) {
+    console.error("Phone number not found in localStorage.");
+    return;
   }
 
-  // Call the function on page load
-  window.addEventListener("DOMContentLoaded", countStudentsOnDriverRoute);
-});
+  // 1. Get the driver with matching contact number
+  const driversRef = collection(
+    db,
+    "institutes",
+    "iEe3BjNAYl4nqKJzCXlH",
+    "Drivers"
+  );
+  const driverQuery = query(driversRef, where("contact", "==", phone));
+  const driverSnapshot = await getDocs(driverQuery);
+
+  if (driverSnapshot.empty) {
+    console.error("No driver found with this phone number.");
+    return;
+  }
+
+  let driverRoute = null;
+  driverSnapshot.forEach((doc) => {
+    driverRoute = doc.data().route;
+  });
+
+  if (!driverRoute) {
+    console.error("Driver route not found.");
+    return;
+  }
+
+  // 2. Find students with matching route number
+  const studentsRef = collection(
+    db,
+    "institutes",
+    "iEe3BjNAYl4nqKJzCXlH",
+    "Students"
+  );
+  const studentQuery = query(
+    studentsRef,
+    where("routeNo", "==", String(driverRoute))
+  );
+  const studentSnapshot = await getDocs(studentQuery);
+
+  const totalStudents = studentSnapshot.size;
+  document.getElementById("total-students").innerText = totalStudents;
+}
+
+// Call the function on page load
+window.addEventListener("DOMContentLoaded", countStudentsOnDriverRoute);

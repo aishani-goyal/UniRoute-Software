@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Twilio credentials - update these with your actual credentials
 account_sid = 'AC6b7edbb3424794359b2af46257b995e7'
-auth_token = 'ae12964c12ca0baf091f61a8533fc58b'
+auth_token = '30a8e5c3956dfc44071f0c296ba5e6a0'
 # This is your "from" phone number. Do not change to the recipient's number.
 twilio_number = '+19203108262'
 client = Client(account_sid, auth_token)

@@ -1,0 +1,443 @@
+/* =========== Google Fonts ============ */
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+/* =============== Globals ============== */
+* {
+  font-family: "Ubuntu", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --blue: #2a2185;
+  --white: #fff;
+  --gray: #f5f5f5;
+  --black1: #222;
+  --black2: #999;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+}
+
+/* =============== Navigation ================ */
+.navigation {
+  position: fixed;
+  width: 250px;
+  height: 100%;
+  background: var(--blue);
+  border-left: 10px solid var(--blue);
+  transition: 0.5s;
+  overflow: hidden;
+}
+.navigation.active {
+  width: 70px;
+}
+
+.navigation ul {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.navigation ul li {
+  position: relative;
+  width: 100%;
+  list-style: none;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  
+}
+
+.navigation ul li:hover,
+.navigation ul li.hovered {
+  background-color: var(--white);
+}
+
+.navigation ul li:nth-child(1) {
+  margin-bottom: 20px;
+  pointer-events: none;
+}
+
+.navigation ul li a {
+  position: relative;
+  display: block;
+  width: 100%;
+  display: flex;
+  text-decoration: none;
+  color: var(--white);
+  cursor: pointer;
+}
+.navigation ul li:hover a,
+.navigation ul li.hovered a {
+  color: var(--blue);
+}
+
+.navigation ul li a .icon {
+  position: relative;
+  display: block;
+  min-width: 60px;
+  height: 60px;
+  line-height: 75px;
+  text-align: center;
+}
+.navigation ul li a .icon ion-icon {
+  font-size: 1.75rem;
+}
+.icon1 {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    font-size: 30px;
+    line-height: 70px;
+    text-align: center;
+}
+
+.navigation ul li a .title {
+  position: relative;
+  display: block;
+  padding: 0 10px;
+  height: 60px;
+  line-height: 60px;
+  text-align: start;
+  white-space: nowrap;
+}
+.title1 {
+    font-size: 30px; /* Double the original size */
+    font-weight: bold;
+    padding: 0 10px;
+    line-height: 80px;
+}
+
+/* --------- curve outside ---------- */
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px 35px 0 10px var(--white);
+  pointer-events: none;
+}
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px -35px 0 10px var(--white);
+  pointer-events: none;
+}
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+.main {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.location-box {
+    background-color: #fff;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    padding: 20px; /* Reduced padding for better spacing */
+    margin-top: 10px; /* Slightly smaller margin */
+    width: 80%; /* Adjust width for better proportion */
+    max-width: 600px; /* Limits size on larger screens */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-left: auto; 
+    margin-right: 300px; /* Centers the box */
+}
+
+
+#map, #student-map {
+  width: 100%; /* Full width to fit inside the box */
+  height: 300px; /* Maintain height */
+  margin: 20px auto; /* Center the map */
+  border: 2px solid green; /* Maintain border */
+  border-radius: 10px; /* Rounded corners */
+}
+
+
+
+#location-info {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+.right-section {
+    display: flex;
+    flex-direction: column; /* Vertical alignment */
+    margin-top:70px;
+    gap: 35px;  /* Spacing between boxes */
+    position: absolute;
+    top: 20px;
+    right: 20px;  /* Align to the right side */
+    width: 250px;  /* Box width */
+}
+
+.info-box {
+    background-color: #f9f9f9;
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-weight: bold;
+}
+.main {
+  position: absolute;
+  width: calc(100% - 250px);
+  left: 250px;
+  min-height: 100vh;
+  background: var(--white);
+  transition: 0.5s;
+}
+.main.active {
+  width: calc(100% - 80px);
+  left: 80px;
+}
+  
+  .topbar {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+  }
+  
+  .toggle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    cursor: pointer;
+  }
+  
+  .search {
+    position: relative;
+    width: 400px;
+    margin: 0 10px;
+  }
+  
+  .search label {
+    position: relative;
+    width: 100%;
+  }
+  
+  .search label input {
+    width: 100%;
+    height: 40px;
+    border-radius: 40px;
+    padding: 5px 20px;
+    padding-left: 35px;
+    font-size: 18px;
+    outline: none;
+    border: 1px solid var(--black2);
+  }
+  
+  .search label ion-icon {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .user {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .user img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  
+  @media (max-width: 991px) {
+    /* Hide the navigation entirely so it doesn't affect layout */
+    .navigation {
+      left: -300px;
+      width: 0; 
+    }
+    .navigation.active {
+      width: 300px; /* Sidebar width when active */
+      left: 0;
+      position: fixed;
+      z-index: 1000;
+    }
+    
+    /* Main content takes full width on mobile; even when the sidebar is active, 
+       we avoid pushing the main content offscreen */
+    .main {
+      width: 100%;
+      left: 0;
+    }
+    .main.active {
+      left: 0;  /* Prevent shifting right on mobile */
+    }
+  }
+  
+  
+  @media (max-width: 768px) {
+    .details {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .user {
+      min-width: 40px;
+    }
+  
+    .navigation {
+      width: 100%;
+      left: -100%;
+      z-index: 1000;
+    }
+  
+    .navigation.active {
+      width: 100%;
+      left: 0;
+    }
+  
+    .toggle {
+      z-index: 10001;
+    }
+  
+    .main.active .toggle {
+      color: #fff;
+      position: fixed;
+      right: 0;
+      left: initial;
+    }
+      
+  }
+
+
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.chat-container {
+  width: 100%;
+  max-width: 950px; /* Keeps it wide on large screens */
+  height: 480px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+  box-sizing: border-box;
+  padding: 0 10px; /* Optional, for breathing room on mobile */
+  position: relative;
+}
+
+#chat-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px; /* Slightly more padding for spacing */
+    height: 380px;
+    overflow-y: auto; /* Scroll for lengthy chats */
+}
+.chat-header {
+  background-color: #075e54;
+  color: #ffffff;
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin: 0 -10px; /* 👈 offsets container padding */
+}
+
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+    flex-wrap: wrap; 
+    
+}
+
+#message-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+}
+
+button {
+    height: 50px;
+    background-color: #128c7e;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    position: absolute;   /* 👈 This makes it float inside the container */
+  bottom: 0px;         /* Distance from the bottom of chat-container */
+  right: 0px; 
+    
+}
+
+button:hover {
+    background-color: #0e776d;
+}
+.message {
+    background-color: #DCF8C6; /* WhatsApp-like green bubble */
+    border-radius: 18px; 
+    padding: 10px 15px;
+    margin: 5px;
+    max-width: 70%; /* Limit bubble width */
+    word-wrap: break-word; /* Wrap long text */
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+.sent {
+  background-color: #E1FFC7; /* Light green for sent messages */
+  align-self: flex-end; 
+  text-align: right;
+
+}
+
+.received {
+    background-color: #FFF; /* White for received messages */
+    align-self: flex-start;
+    text-align: left;
+}

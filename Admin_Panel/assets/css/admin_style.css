@@ -1,0 +1,955 @@
+/* =========== Google Fonts ============ */
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+/* =============== Globals ============== */
+* {
+  font-family: "Ubuntu", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --blue: #2a2185;
+  --white: #fff;
+  --gray: #f5f5f5;
+  --black1: #222;
+  --black2: #999;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+}
+
+/* =============== Navigation ================ */
+.navigation {
+  position: fixed;
+  width: 300px;
+  height: 100%;
+  background: var(--blue);
+  border-left: 10px solid var(--blue);
+  transition: 0.5s;
+  overflow: hidden;
+}
+.navigation.active {
+  width: 80px;
+}
+
+.navigation ul {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.navigation ul li {
+  position: relative;
+  width: 100%;
+  list-style: none;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.navigation ul li:hover,
+.navigation ul li.hovered {
+  background-color: var(--white);
+}
+
+.navigation ul li:nth-child(1) {
+  margin-bottom: 20px;
+  pointer-events: none;
+}
+
+.navigation ul li a {
+  position: relative;
+  display: block;
+  width: 100%;
+  display: flex;
+  text-decoration: none;
+  color: var(--white);
+  cursor: pointer;
+}
+
+
+
+.navigation ul li:hover a,
+.navigation ul li.hovered a {
+  color: var(--blue);
+}
+
+.navigation ul li a .icon {
+  position: relative;
+  display: block;
+  min-width: 60px;
+  height: 60px;
+  line-height: 75px;
+  text-align: center;
+}
+.navigation ul li a .icon ion-icon {
+  font-size: 1.75rem;
+}
+.icon1 {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    font-size: 30px;
+    line-height: 70px;
+    text-align: center;
+}
+
+
+.navigation ul li a .title {
+  position: relative;
+  display: block;
+  padding: 0 10px;
+  height: 60px;
+  line-height: 60px;
+  text-align: start;
+  white-space: nowrap;
+}
+.title1 {
+    font-size: 30px; /* Double the original size */
+    font-weight: bold;
+    padding: 0 10px;
+    line-height: 80px;
+}
+
+
+/* --------- curve outside ---------- */
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px 35px 0 10px var(--white);
+  pointer-events: none;
+}
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -50px;
+  width: 50px;
+  height: 50px;
+  background-color: transparent;
+  border-radius: 50%;
+  box-shadow: 35px -35px 0 10px var(--white);
+  pointer-events: none;
+}
+
+/* ===================== Main ===================== */
+.main {
+  position: absolute;
+  width: calc(100% - 300px);
+  left: 300px;
+  min-height: 100vh;
+  background: var(--white);
+  transition: 0.5s;
+}
+.main.active {
+  width: calc(100% - 80px);
+  left: 80px;
+}
+
+.topbar {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.toggle {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  cursor: pointer;
+}
+
+.search {
+  position: relative;
+  width: 400px;
+  margin: 0 10px;
+}
+
+.search label {
+  position: relative;
+  width: 100%;
+}
+
+.search label input {
+  width: 100%;
+  height: 40px;
+  border-radius: 40px;
+  padding: 5px 20px;
+  padding-left: 35px;
+  font-size: 18px;
+  outline: none;
+  border: 1px solid var(--black2);
+}
+
+.search label ion-icon {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  font-size: 1.2rem;
+}
+
+.user {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.user img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ======================= Cards ====================== */
+.cardBox {
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 30px;
+}
+
+.cardBox .card {
+  position: relative;
+  background: var(--white);
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+}
+
+.cardBox .card .numbers {
+  position: relative;
+  font-weight: 500;
+  font-size: 2rem;
+  color: var(--blue);
+}
+
+.cardBox .card .cardName {
+  color: var(--black2);
+  font-size: 1.1rem;
+  margin-top: 5px;
+}
+
+.cardBox .card .iconBx {
+  font-size: 2.5rem;
+  color: var(--black2);
+}
+
+.cardBox .card:hover {
+  background: var(--blue);
+}
+.cardBox .card:hover .numbers,
+.cardBox .card:hover .cardName,
+.cardBox .card:hover .iconBx {
+  color: var(--white);
+}
+
+/* ================== Order Details List ============== */
+.details {
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 30px;
+  /* margin-top: 10px; */
+}
+
+.details .recentOrders {
+  position: relative;
+  display: grid;
+  min-height: 500px;
+  background: var(--white);
+  padding: 20px;
+  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+}
+
+.details .cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.cardHeader h2 {
+  font-weight: 600;
+  color: var(--blue);
+}
+.cardHeader .btn {
+  position: relative;
+  padding: 5px 10px;
+  background: var(--blue);
+  text-decoration: none;
+  color: var(--white);
+  border-radius: 6px;
+}
+
+.details table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.details table thead td {
+  font-weight: 600;
+}
+.details .recentOrders table tr {
+  color: var(--black1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.details .recentOrders table tr:last-child {
+  border-bottom: none;
+}
+/*.details .recentOrders table tbody tr:hover {
+  background: var(--blue);
+  color: var(--white);
+}*/
+
+.details .recentOrders table tr td {
+  padding: 10px;
+}
+.details .recentOrders table tr td:last-child {
+  text-align: end;
+}
+.details .recentOrders table tr td:nth-child(2) {
+  text-align: end;
+}
+.details .recentOrders table tr td:nth-child(3) {
+  text-align: center;
+}
+.status.delivered {
+  padding: 2px 4px;
+  background: #8de02c;
+  color: var(--white);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.status.pending {
+  padding: 2px 4px;
+  background: #e9b10a;
+  color: var(--white);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.status.return {
+  padding: 2px 4px;
+  background: #f00;
+  color: var(--white);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.status.inProgress {
+  padding: 2px 4px;
+  background: #1795ce;
+  color: var(--white);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+
+/* Button container styles */
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  /* Aligns the button to the right */
+  margin: 10px 20px;
+  /* Margin to match the table container */
+}
+
+/* Vendor Details */
+/* Vendor Header */
+.vendor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.vendor-title {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+/* Vendor Card */
+.vendor-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.vendor-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.vendor-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.vendor-info label {
+  font-weight: bold;
+}
+
+.vendor-info input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Save Button */
+.save-button {
+  background: #28a745;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+
+
+
+/* Other existing styles remain unchanged */
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 20px; /* Same margin as the table container */
+}
+
+.table-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+}
+
+
+.table-container {
+  margin: 0 20px;
+  /* Add margin to the left and right of the table */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+h2 {
+  margin-top: 20px;
+  font-size: 24px;
+}
+
+.edit-icon,
+.delete-icon,
+.merge-icon {
+  cursor: pointer;
+  margin-right: 10px;
+  color: #4CAF50;
+  /* Green color for icons */
+}
+
+.edit-icon:hover {
+  color: #45a049;
+}
+
+.delete-icon {
+  color: #f44336;
+  /* Red color for delete icon */
+}
+
+.delete-icon:hover {
+  color: #d32f2f;
+}
+
+.merge-icon {
+  color: #2196F3;
+  /* Blue color for merge icon */
+}
+
+.merge-icon:hover {
+  color: #1976D2;
+}
+
+/* Modal styles */
+.modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  /* Could be more or less, depending on screen size */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.section-title {
+  font-weight: bold;
+  margin-right: 10px;
+  /* Space between title and buttons */
+  font-size: 16px;
+  /* Adjust font size as needed */
+  align-self: center;
+  /* Center vertically if using flexbox */
+}
+
+/* Button styles */
+.add-button,
+.save-button {
+  margin: 10px 5px;
+  /* Margin to match the table container */
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  /* Green background for Add buttons */
+  color: white;
+  /* White text */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  /* Use flexbox for alignment */
+  align-items: center;
+  /* Center items vertically */
+}
+
+.edit-button{
+  margin: 10px 5px;
+    /* Margin to match the table container */
+    padding: 10px 15px;
+    background-color: #737475;
+    /* Green background for Add buttons */
+    color: white;
+    /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    /* Use flexbox for alignment */
+    align-items: center;
+    /* Center items vertically */
+    
+}
+
+.merge-button{
+  margin: 10px 5px;
+    /* Margin to match the table container */
+    padding: 10px 15px;
+    background-color: #737475;
+    /* Green background for Add buttons */
+    color: white;
+    /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    /* Use flexbox for alignment */
+    align-items: center;
+    /* Center items vertically */
+
+}
+
+.add-button:hover,
+.save-button:hover {
+  background-color: #45a049;
+  /* Darker green on hover */
+}
+
+.add-button i,
+.save-button i {
+  margin-right: 5px;
+  /* Space between icon and text */
+}
+
+/* Save button styles */
+.save-button {
+  background-color: #2196F3;
+  /* Blue background for Save buttons */
+}
+
+.save-button:hover {
+  background-color: #1976D2;
+  /* Darker blue on hover */
+}
+
+
+
+/* ====================== Responsive Design ========================== */
+@media (max-width: 991px) {
+    /* Hide the navigation entirely so it doesn't affect layout */
+    .navigation {
+      left: -300px;
+      width: 0; 
+    }
+    .navigation.active {
+      width: 300px; /* Sidebar width when active */
+      left: 0;
+      position: fixed;
+      z-index: 1000;
+    }
+    
+    /* Main content takes full width on mobile; even when the sidebar is active, 
+       we avoid pushing the main content offscreen */
+    .main {
+      width: 100%;
+      left: 0;
+    }
+    .main.active {
+      left: 0;  /* Prevent shifting right on mobile */
+    }
+  
+  .cardBox {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .recentOrders {
+      width: 90%;
+  }
+    .details {
+      flex-direction: column;
+    }
+}
+
+
+@media (max-width: 768px) {
+  .details {
+    grid-template-columns: 1fr;
+  }
+  .recentOrders {
+    overflow-x: auto;
+  }
+  .status.inProgress {
+    white-space: nowrap;
+  }
+  table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+  }
+    .details {
+      margin: 10px;
+    }
+  
+    .cardHeader h2 {
+      font-size: 16px;
+    }
+}
+
+/*@media (max-width: 480px) {
+  .cardBox {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .cardHeader h2 {
+    font-size: 20px;
+  }
+  .user {
+    min-width: 40px;
+  }
+  .navigation {
+    width: 100%;
+    left: -100%;
+    z-index: 1000;
+  }
+  .navigation.active {
+    width: 100%;
+    left: 0;
+  }
+  .toggle {
+    z-index: 10001;
+  }
+  .main.active .toggle {
+    color: #fff;
+    position: fixed;
+    right: 0;
+    left: initial;
+  }
+}*/
+
+@media (max-width: 480px) {
+  .cardBox {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .cardHeader h2 {
+    font-size: 14px;
+  }
+
+  .user {
+    min-width: 40px;
+  }
+
+  .navigation {
+    width: 100%;
+    left: -100%;
+    z-index: 1000;
+  }
+
+  .navigation.active {
+    width: 100%;
+    left: 0;
+  }
+
+  .toggle {
+    z-index: 10001;
+  }
+
+  .main.active .toggle {
+    color: #fff;
+    position: fixed;
+    right: 0;
+    left: initial;
+  }
+
+  /* ✅ Scrollable Complaints Table */
+  .complaintsContainer {
+    overflow-x: auto;
+    overflow-y: hidden; /* ✅ prevent vertical scroll in the container */
+    width: 100%;
+  }
+
+  .complaintsTable {
+    min-width: 600px; /* adjust as needed */
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .complaintsTable th,
+  .complaintsTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+    white-space: nowrap; /* prevents text from wrapping */
+  }
+  .table-container {
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 10px;
+  }
+  
+  /* Ensure the table fits inside the container */
+  .table-container table {
+    min-width: 100%; /* or more, based on columns */
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  /* Prevent table text from wrapping and stretching */
+  .table-container th,
+  .table-container td {
+    white-space: nowrap;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .button-container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;         /* set fixed width */
+    height: 32px;        /* set fixed height */
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    font-size: 0;        /* hide text from affecting spacing */
+  }
+  
+  /* Optional: If text is inside <span> or textNode, hide it explicitly */
+  .button-container button i {
+    font-size: 16px;     /* control icon size */
+  }
+  
+  .button-container button::after {
+    content: "";         /* hide any text that might come after */
+  }
+}
+
+
+
+/* ============ Global Styles ============ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #f4f4f4;
+}
+
+/* ============ Dashboard Layout ============ */
+.details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin: 20px;
+}
+
+/*
+.feedbackChart,
+.recentAlerts {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  flex: 1;
+  min-width: 350px;
+  margin-right: 15px;
+  
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
+}
+
+.cardHeader h2 {
+  font-size: 18px;
+  color: #333;
+}
+
+/* ============ Recent Alerts ============ */
+
+/*
+.recentAlerts ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.recentAlerts li {
+  padding: 10px;
+  background: #f9f9f9;
+  border-left: 5px solid #007bff;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+
+.recentAlerts li:nth-child(odd) {
+  border-left-color: #dc3545;
+  
+}
+
+.recentAlerts li:nth-child(even) {
+  border-left-color: #28a745;
+  
+}*/
+
+
+/* Complaints Table */
+.complaints-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.complaints-table th,
+.complaints-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.complaints-table th {
+  background: #f4f4f4;
+}
+

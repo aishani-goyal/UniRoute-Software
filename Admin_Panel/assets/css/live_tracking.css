@@ -1,0 +1,426 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
+
+/* =============== Globals ============== */
+* {
+    font-family: "Ubuntu", sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --blue: #2a2185;
+    --white: #fff;
+    --gray: #f5f5f5;
+    --black1: #222;
+    --black2: #999;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+}
+
+/* =============== Navigation ================ */
+.navigation {
+    position: fixed;
+    width: 300px;
+    height: 100%;
+    background: var(--blue);
+    border-left: 10px solid var(--blue);
+    transition: 0.5s;
+    overflow: hidden;
+    z-index: 15;
+}
+
+.navigation.active {
+    width: 80px;
+}
+
+.navigation ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.navigation ul li {
+    position: relative;
+    width: 100%;
+    list-style: none;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+
+.navigation ul li:hover,
+.navigation ul li.hovered {
+    background-color: var(--white);
+}
+
+.navigation ul li:nth-child(1) {
+    margin-bottom: 20px;
+    pointer-events: none;
+}
+
+.navigation ul li a {
+    position: relative;
+    display: block;
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.navigation ul li:hover a,
+.navigation ul li.hovered a {
+    color: var(--blue);
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
+}
+
+.navigation ul li a .icon ion-icon {
+    font-size: 1.75rem;
+}
+
+.icon1 {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    font-size: 30px;
+    line-height: 70px;
+    text-align: center;
+}
+
+.navigation ul li a .title {
+    position: relative;
+    display: block;
+    padding: 0 10px;
+    height: 60px;
+    line-height: 60px;
+    text-align: start;
+    white-space: nowrap;
+}
+
+.title1 {
+    font-size: 30px;
+    /* Double the original size */
+    font-weight: bold;
+    padding: 0 10px;
+    line-height: 80px;
+}
+
+/* --------- curve outside ---------- */
+.navigation ul li:hover a::before,
+.navigation ul li.hovered a::before {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px 35px 0 10px var(--white);
+    pointer-events: none;
+}
+
+.navigation ul li:hover a::after,
+.navigation ul li.hovered a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: -50px;
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 35px -35px 0 10px var(--white);
+    pointer-events: none;
+}
+
+/* Bus Tracking Section */
+/* Container for buses */
+.bus-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+.bus-box {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    border: 2px solid #224780;
+}
+.bus-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+.bus-box:hover {
+    transform: scale(1.05);
+}
+
+.bus-box h3 {
+    font-size: 20px;
+    color: #224780;
+    margin-bottom: 5px;
+}
+
+.bus-box p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+/* Map Box for Live Tracking */
+.map {
+    width: 100%;
+    height: 200px;
+    min-height: 300px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.map-container {
+    width: 100%;
+    height: 250px;
+    /* Balanced height */
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    /* Prevents map content overflow */
+}
+
+/* Live Status */
+.live-status {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.running {
+    color: white;
+    background: #27ae60;
+}
+
+.delayed {
+    color: white;
+    background: #e67e22;
+}
+
+.not-available {
+    color: white;
+    background: #c0392b;
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    height: 60px;
+    line-height: 75px;
+    text-align: center;
+}
+
+.navigation ul li a .icon ion-icon {
+    font-size: 1.75rem;
+}
+
+.icon1 {
+    position: relative;
+    display: block;
+    min-width: 60px;
+    font-size: 30px;
+    line-height: 70px;
+    text-align: center;
+}
+
+
+
+.sidebar {
+    width: 180px;
+    position: fixed;
+    height: 100vh;
+    /* Full height */
+    z-index: 10;
+    /* Ensures the sidebar doesn't overlap content */
+}
+
+/* Overall content styling */
+.content {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+/* Heading style */
+.content h2 {
+    text-align: center;
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 30px;
+}
+/* ===================== Main ===================== */
+.main {
+  position: absolute;
+  width: calc(100% - 300px);
+  left: 300px;
+  min-height: 100vh;
+  background: var(--white);
+  transition: 0.5s;
+}
+.main.active {
+  width: calc(100% - 80px);
+  left: 80px;
+}
+
+.topbar {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.toggle {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  cursor: pointer;
+}
+
+.search {
+  position: relative;
+  width: 400px;
+  margin: 0 10px;
+}
+
+.search label {
+  position: relative;
+  width: 100%;
+}
+
+.search label input {
+  width: 100%;
+  height: 40px;
+  border-radius: 40px;
+  padding: 5px 20px;
+  padding-left: 35px;
+  font-size: 18px;
+  outline: none;
+  border: 1px solid var(--black2);
+}
+
+.search label ion-icon {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  font-size: 1.2rem;
+}
+
+.user {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.user img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tablets and below */
+@media (max-width: 768px) {
+    .content {
+        padding: 15px;
+    }
+
+    .content h2 {
+        font-size: 26px;
+    }
+
+    .bus-container {
+        grid-template-columns: repeat(1, 1fr); /* Stack cards on smaller screens */
+        gap: 15px;
+        padding: 20px;
+        max-width: 100%; /* Allow full width on mobile */
+        margin: 0 auto;
+    }
+
+    .bus-card {
+        padding: 16px;
+    }
+
+    .bus-card h3 {
+        font-size: 18px;
+    }
+
+    .bus-card p {
+        font-size: 13px;
+    }
+
+    /* Ensure sidebar does not push content on smaller screens */
+    .main.active {
+        margin-left: 0;
+    }
+}
+
+/* Phones and small devices */
+@media (max-width: 480px) {
+    .content h2 {
+        font-size: 22px;
+    }
+
+    .bus-card {
+        padding: 14px;
+    }
+
+    .bus-card h3 {
+        font-size: 16px;
+    }
+
+    .bus-card p {
+        font-size: 12px;
+    }
+
+    /* Ensure sidebar does not overlap content */
+    .main.active {
+        margin-left: 0;
+    }
+}

@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://uni-server-wcep.onrender.com"],
+    "method": ["GET", "POST", "PUT"],
+    "maxAgeSeconds": 3600
+  }
+]

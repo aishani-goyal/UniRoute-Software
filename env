@@ -1,8 +1,0 @@
-# Twilio Configuration
-TWILIO_SID=AC6b7edbb3424794359b2af46257b995e7
-TWILIO_AUTH_TOKEN=d9fa298d4e68307bb343f9583603cc8c
-TWILIO_PHONE_NUMBER=+19203108262
-
-# Email Configuration (optional)
-EMAIL_PASSWORD=your_email_app_password
-SECRET_KEY=your_flask_secret_key

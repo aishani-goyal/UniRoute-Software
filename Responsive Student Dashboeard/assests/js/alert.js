@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import {
+    getFirestore, collection, addDoc, query, where, getDocs, setDoc, doc
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -87,12 +89,38 @@ function showMCQPopup() {
         const selectedEmergency = document.querySelector('input[name="emergency"]:checked').value;
 
         try {
-            await addDoc(collection(db, "Emergency_Alert"), {
+            // Get the logged-in student email from localStorage
+            let loggedInEmail = localStorage.getItem("loggedInEmail");
+
+            if (!loggedInEmail) {
+                showPopup("❌ User email not found. Please check your login details.", false);
+                return;
+            }
+
+            // Query the Students collection using the email
+            const studentsRef = collection(db, "institutes/iEe3BjNAYl4nqKJzCXlH/Students");
+            const q = query(studentsRef, where("email", "==", loggedInEmail));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                showPopup("❌ Student with this email not found.", false);
+                return;
+            }
+
+            // Extract student data
+            const studentDoc = querySnapshot.docs[0];
+            const studentData = studentDoc.data();
+            const { studentId, name, routeNo } = studentData;
+
+            // Create the alert with student info
+            await setDoc(doc(db, "Emergency_Alert", studentId), {
+                name: name,
+                routeNo: routeNo,
                 message: selectedEmergency,
                 timestamp: new Date().toLocaleString()
             });
 
-            showPopup(`✅ ${selectedEmergency} sent successfully!`, true);
+            showPopup(`✅ Alert sent successfully by ${name} (Route ${routeNo})!`, true);
         } catch (error) {
             showPopup("❌ Failed to send alert. Please try again.", false);
             console.error("Error:", error);
@@ -107,24 +135,12 @@ function showMCQPopup() {
     });
 }
 
-// Function to show success/failure popups
+// Show status message
 function showPopup(message, isSuccess) {
-    const popup = document.createElement("div");
-    popup.className = "popup";
-    popup.innerHTML = `
-        <div class="popup-content">
-            <p>${message}</p>
-            <button id="close-popup">OK</button>
-        </div>
-    `;
-    document.body.appendChild(popup);
-
-    document.getElementById("close-popup").addEventListener("click", () => {
-        popup.remove();
-    });
+    const alertStatus = document.getElementById("alert-status");
+    alertStatus.innerText = message;
+    alertStatus.style.color = isSuccess ? "green" : "red";
 }
 
-// Emergency Alert Button Logic
-document.getElementById("emergency-alert-btn").addEventListener("click", () => {
-    showMCQPopup();
-});
+// ✅ Corrected button ID
+document.getElementById("emergency-alert-btn").addEventListener("click", showMCQPopup);

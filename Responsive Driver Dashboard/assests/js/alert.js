@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"; 
 import { getFirestore, collection, getDocs, query, where, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Firebase configuration
@@ -41,7 +41,6 @@ function showMCQPopup() {
             </form>
         </div>
     `;
-
     document.body.appendChild(popup);
 
     const popupStyle = document.createElement("style");
@@ -102,14 +101,17 @@ function showMCQPopup() {
                 return;
             }
 
-            // Extract the route number from the driver document
+            // Extract name and route number from the driver document
             const driverDoc = querySnapshot.docs[0];
-            const routeNumber = driverDoc.data().route;
+            const driverData = driverDoc.data();
+            const { name, route } = driverData;
 
-            // Set document with routeNumber as ID
-            await setDoc(doc(db, "Emergency_Alert", routeNumber), {
-                message: selectedEmergency,
-                timestamp: new Date().toLocaleString()
+            // Set document with routeNumber as ID and include name
+            await setDoc(doc(db, "Emergency_Alert", route), {
+                message: `${selectedEmergency} from Driver ${name}`,
+                timestamp: new Date().toLocaleString(),
+                driverName: name,
+                driverRoute: route
             });
 
             showPopup(`✅ ${selectedEmergency} sent successfully!`, true);

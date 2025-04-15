@@ -214,75 +214,76 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, where, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
-    authDomain: "uniroute-3dda9.firebaseapp.com",
-    projectId: "uniroute-3dda9",
-    storageBucket: "uniroute-3dda9.appspot.com",
-    messagingSenderId: "465796690799",
-    appId: "1:465796690799:web:cab2801937f2d4cac7ee9a",
-    measurementId: "G-VWEFWH2517"
+  apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
+  authDomain: "uniroute-3dda9.firebaseapp.com",
+  projectId: "uniroute-3dda9",
+  storageBucket: "uniroute-3dda9.appspot.com",
+  messagingSenderId: "465796690799",
+  appId: "1:465796690799:web:cab2801937f2d4cac7ee9a",
+  measurementId: "G-VWEFWH2517"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-// Function to check and display emergency alerts
-document.addEventListener("DOMContentLoaded", async function () {
+
+document.addEventListener("DOMContentLoaded", function () {
   async function checkEmergencyAlerts() {
     try {
-      // Reference to Firestore collection for Emergency Alerts
-      const emergencyAlertsRef = firebase.firestore().collection("Emergency_Alert");
+      const emergencyAlertsRef = collection(db, "Emergency_Alert");
+      const snapshot = await getDocs(emergencyAlertsRef);
 
-      // Fetch all the documents in the Emergency_Alert collection
-      const snapshot = await emergencyAlertsRef.get();
-
-      // Check if the collection is empty
       if (snapshot.empty) {
         console.log("No emergency alerts found.");
         return;
       }
 
-      // Iterate through each alert document
-      snapshot.forEach((doc) => {
-        const alertData = doc.data();  // Get alert data from the document
-        const alertMessage = alertData.message;  // Extract the alert message
-        const timestamp = alertData.timestamp;  // Extract the timestamp
-        const driverId = alertData.driverId;  // Extract the driver ID
-        const routeId = alertData.routeId;  // Extract the route ID
+      snapshot.forEach(async (alertDoc) => {
+        const alertData = alertDoc.data();
+        const { message, timestamp, driverName, driverRoute, name, routeNo } = alertData;
 
-        // Display the emergency alert as a browser alert
-        if (confirm(`🚨 Emergency Alert!
-        \nDriver ID: ${driverId}
-        \nRoute ID: ${routeId}
-        \nMessage: ${alertMessage}
-        \nTime: ${timestamp}
-        \n\nClick OK to acknowledge and remove from Firestore.`)) {
-          // If the user clicks "OK", delete the alert from Firestore
-          emergencyAlertsRef.doc(doc.id).delete()
-            .then(() => {
-              console.log(`Alert with ID ${doc.id} removed from Firestore.`);
-            })
-            .catch((error) => {
-              console.error("Error removing alert: ", error);
-            });
+        let senderInfo = "";
+
+        // Check for student alerts based on message content
+        if (message && message.includes("🚨 Speed Alert")) {
+          senderInfo = `🚨 Student Speed Alert\nName: ${name}\nRoute: ${routeNo}\nTime: ${timestamp}\nMessage: ${message}`;
+        } 
+        // Check for driver alerts based on message content (check for "from Driver")
+        else if (message && message.includes("from Driver")) {
+          // Use driverName and driverRoute directly from Emergency_Alert
+          const driverNameToDisplay = driverName ?? "Unknown Driver"; // Fallback to "Unknown Driver" if not available
+          const driverRouteToDisplay = driverRoute ?? "Unknown Route"; // Fallback to "Unknown Route" if not available
+
+          senderInfo = `🔥 Driver Emergency Alert\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\nTime: ${timestamp}\nMessage: ${message}`;
         } else {
-          console.log("User canceled the alert removal.");
+          senderInfo = `👤 Unknown sender`;
+        }
+
+        // Show the alert popup with information
+        const confirmDelete = confirm(`${senderInfo}\n\nClick OK to acknowledge and delete this alert.`);
+
+        if (confirmDelete) {
+          await deleteDoc(doc(db, "Emergency_Alert", alertDoc.id));
+          console.log(`Alert with ID ${alertDoc.id} removed from Firestore.`);
         }
       });
     } catch (error) {
-      console.error("Error checking for emergency alerts:", error);
+      console.error("Error checking emergency alerts:", error);
     }
   }
 
-  // Call the function to check emergency alerts when the page loads
+  // Initially check for emergency alerts
   checkEmergencyAlerts();
-
-  // Optional: Continuously check for new emergency alerts every 30 seconds (adjust as needed)
-  setInterval(checkEmergencyAlerts, 30000);  // Every 30 seconds
+  setInterval(checkEmergencyAlerts, 30000); // Every 30 seconds
 });

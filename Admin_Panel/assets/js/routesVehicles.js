@@ -650,4 +650,3 @@ document.getElementById("merge-routes").addEventListener("click", () => {
   document.querySelector("#routes-table tbody").appendChild(newRow);
   alert("Merged route added. Don’t forget to click 'Save Routes' to store it in Firestore.");
 });
-

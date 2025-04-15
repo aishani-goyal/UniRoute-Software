@@ -1,5 +1,18 @@
 $(document).ready(function () {
-  // Ensure jQuery is loaded
+  // Redirect based on localStorage
+  const remembered = localStorage.getItem('UnirouteUser');
+  const remembered1 = localStorage.getItem('UnirouteStudent');
+  const remembered2 = localStorage.getItem('UnirouteDriver');
+
+  if (remembered) {
+    window.location.href = "Admin_Panel/admin_home.html";
+  } else if (remembered1) {
+    window.location.href = "Responsive Student Dashboeard/home.html";
+  } else if (remembered2) {
+    window.location.href = "Responsive Driver Dashboard/driver.html";
+  }
+
+  // CounterUp plugin check
   if (typeof $.fn.counterUp !== "undefined") {
     $(".counter").counterUp({
       delay: 10,
@@ -8,37 +21,12 @@ $(document).ready(function () {
   } else {
     console.error("counterUp plugin is not loaded correctly.");
   }
-});
-document.addEventListener('DOMContentLoaded', function () {
-  const remembered = localStorage.getItem('UnirouteUser');
-  const remembered1 = localStorage.getItem('UnirouteStudent');
-  const remembered2 = localStorage.getItem('UnirouteDriver');
-  if (remembered) {
-    window.location.href = "Admin_Panel/admin_home.html";
-  }
-  else if(remembered1){
-    window.location.href = "Responsive Student Dashboeard/home.html";
-  }
-  else if(remembered2){
-    window.location.href = "Responsive Driver Dashboard/driver.html";
-  }
-})
 
-(function ($) {
-  "use strict";
-
-  // Spinner
-  var spinner = function () {
-    setTimeout(function () {
-      if ($("#spinner").length > 0) {
-        $("#spinner").removeClass("show");
-      }
-    }, 1);
-  };
-  spinner();
-
-  // Initiate the wowjs
-  new WOW().init();
+  // Facts counter
+  $('[data-toggle="counter-up"]').counterUp({
+    delay: 10,
+    time: 2000,
+  });
 
   // Sticky Navbar
   $(window).scroll(function () {
@@ -76,12 +64,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Facts counter
-  $('[data-toggle="counter-up"]').counterUp({
-    delay: 10,
-    time: 2000,
-  });
-
   // Back to top button
   $(window).scroll(function () {
     if ($(this).scrollTop() > 100) {
@@ -103,18 +85,10 @@ document.addEventListener('DOMContentLoaded', function () {
     loop: true,
     center: true,
     responsive: {
-      0: {
-        items: 1,
-      },
-      576: {
-        items: 1,
-      },
-      768: {
-        items: 2,
-      },
-      992: {
-        items: 3,
-      },
+      0: { items: 1 },
+      576: { items: 1 },
+      768: { items: 2 },
+      992: { items: 3 },
     },
   });
 
@@ -123,22 +97,21 @@ document.addEventListener('DOMContentLoaded', function () {
     loop: true,
     margin: 45,
     dots: false,
-    loop: true,
     autoplay: true,
     smartSpeed: 1000,
     responsive: {
-      0: {
-        items: 2,
-      },
-      576: {
-        items: 4,
-      },
-      768: {
-        items: 6,
-      },
-      992: {
-        items: 8,
-      },
+      0: { items: 2 },
+      576: { items: 4 },
+      768: { items: 6 },
+      992: { items: 8 },
     },
   });
-})(jQuery);
+
+  // Spinner remove after load
+  if ($("#spinner").length > 0) {
+    $("#spinner").removeClass("show");
+  }
+
+  // Initiate wowjs
+  new WOW().init();
+});

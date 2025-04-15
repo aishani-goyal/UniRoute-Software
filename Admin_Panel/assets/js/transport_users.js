@@ -175,7 +175,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     studentsTable.appendChild(row);
-    row.scrollIntoView({ behavior: "smooth" });
+    // Scroll behavior if more than 10 rows
+    const rows = studentsTable.querySelectorAll("tr");
+    if (rows.length > 10) {
+      const tableContainer = document.querySelector(".table-container");
+      row.scrollIntoView({ behavior: "smooth", block: "end" });
+      tableContainer.scrollTop = tableContainer.scrollHeight;
+    }
   }
 
   async function loadStudents() {

@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   roleDropdown.addEventListener("change", function () {
     let role = this.value;
     idPasswordFields.style.display =
-      role === "student" || role === "authority" ? "block" : "none";
+      role === "student" ? "block" : "none";
     mobileOtpFields.style.display = role === "driver" ? "block" : "none";
     adminFields.style.display = role === "admin" ? "block" : "none";
 
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", (event) => {
       event.preventDefault();
       let role = roleDropdown.value;
-      if (role === "student" || role === "authority") {
+      if (role === "student") {
         studentAuthorityLogin(role);
       } else if (role === "driver") {
         driverLogin();

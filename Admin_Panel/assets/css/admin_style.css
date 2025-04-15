@@ -478,6 +478,9 @@ body {
 
 .table-container {
   margin: 0 20px;
+  max-height: 400px;
+    /* Adjust height to fit ~10 rows */
+  overflow-y: auto;
   /* Add margin to the left and right of the table */
 }
 

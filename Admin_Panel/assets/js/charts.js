@@ -45,7 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // ✅ Fetch feedback data and display chart
   async function fetchFeedbackAndPlotChart() {
     try {
-      const feedbackCollection = await db.collection("Feedback").get();
+      const feedbackCollection = await db
+      .collection("institutes")
+      .doc("iEe3BjNAYl4nqKJzCXlH")
+      .collection("Feedback")
+      .get();
       let total = {
         driverBehaviour: 0,
         onTimeService: 0,
@@ -297,7 +301,10 @@ document.addEventListener("DOMContentLoaded", () => {
       .collection("institutes")
       .doc(instituteId)
       .collection("Drivers");
-    const feedbackRef = db.collection("Feedback");
+      const feedbackRef = db
+      .collection("institutes")
+      .doc(instituteId)
+      .collection("Feedback"); // Corrected path to subcollection
     const complaintsTableBody = document.getElementById("complaintsBody");
     complaintsTableBody.innerHTML = "";
 

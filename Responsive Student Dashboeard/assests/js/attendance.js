@@ -76,7 +76,14 @@ async function getRollFromEmail(email) {
 // ✅ Function to store attendance in Firestore
 async function markAttendance(roll) {
   const dateKey = getTodayDate();
-  const attendancePath = collection(db, "Attendance", roll, dateKey);
+  const attendancePath = collection(
+    db,
+    "institutes",
+    "iEe3BjNAYl4nqKJzCXlH",
+    "Attendance",
+    roll,
+    dateKey
+  );
 
   await addDoc(attendancePath, {
     roll: roll,
@@ -146,7 +153,14 @@ async function fetchAttendanceHistory(roll) {
   // Fetch all subcollections for past 7 days
   for (let i = 0; i < last7Days.length; i++) {
     const dateStr = getTodayDateFromObj(last7Days[i].date);
-    const attendanceRef = collection(db, "Attendance", roll, dateStr);
+    const attendanceRef = collection(
+      db,
+      "institutes",
+      "iEe3BjNAYl4nqKJzCXlH",
+      "Attendance",
+      roll,
+      dateStr
+    );
     const snapshot = await getDocs(attendanceRef);
 
     if (!snapshot.empty) {

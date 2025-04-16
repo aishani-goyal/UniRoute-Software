@@ -141,7 +141,14 @@ document
     const safeEmail = studentEmail.replace(/[.#$[\]/]/g, "_");
 
     try {
-      const feedbackDocRef = doc(db, "Feedback", safeEmail);
+      const feedbackDocRef = doc(
+        db,
+        "institutes",
+        "iEe3BjNAYl4nqKJzCXlH",
+        "Feedback",
+        safeEmail
+      );
+      
 
       await setDoc(feedbackDocRef, {
         name: studentName,

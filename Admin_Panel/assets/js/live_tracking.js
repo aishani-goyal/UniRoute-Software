@@ -146,7 +146,7 @@ function loadRoutes() {
 
 // Fetch location data for a given route
 async function fetchLocationForRoute(routeNumber) {
-  const locationRef = doc(db, "Location", routeNumber); // Directly reference Location collection
+  const locationRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH","Location", routeNumber); // Directly reference Location collection
   console.log(`Fetching location for route ${routeNumber} from: `, locationRef.path);
 
   const locationSnapshot = await getDoc(locationRef);

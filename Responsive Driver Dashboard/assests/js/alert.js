@@ -107,7 +107,7 @@ function showMCQPopup() {
             const { name, route } = driverData;
 
             // Set document with routeNumber as ID and include name
-            await setDoc(doc(db, "Emergency_Alert", route), {
+            await setDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert", route), {
                 message: `${selectedEmergency} from Driver ${name}`,
                 timestamp: new Date().toLocaleString(),
                 driverName: name,

@@ -241,7 +241,7 @@ const db = getFirestore(app);
 document.addEventListener("DOMContentLoaded", function () {
   async function checkEmergencyAlerts() {
     try {
-      const emergencyAlertsRef = collection(db, "Emergency_Alert");
+      const emergencyAlertsRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert");
       const snapshot = await getDocs(emergencyAlertsRef);
 
       if (snapshot.empty) {
@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const confirmDelete = confirm(`${senderInfo}\n\nClick OK to acknowledge and delete this alert.`);
       
         if (confirmDelete) {
-          await deleteDoc(doc(db, "Emergency_Alert", alertDoc.id));
+          await deleteDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert", alertDoc.id));
           console.log(`Alert with ID ${alertDoc.id} removed from Firestore.`);
         }
       });

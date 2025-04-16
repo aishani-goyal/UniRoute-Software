@@ -86,7 +86,7 @@ window.sendMessage = async function () {
       const timestamp = new Date().toISOString(); // Use timestamp as the document ID
 
       // Reference to the 'chats' collection for storing messages
-      const chatRef = collection(db, "chats");
+      const chatRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "chats");
 
       // Use doc() with the timestamp as the document ID
       const messageDocRef = doc(chatRef, timestamp);
@@ -109,7 +109,7 @@ window.sendMessage = async function () {
 
 // ✅ Display real-time messages from all chats
 function listenForMessages() {
-  const chatRef = collection(db, "chats");
+  const chatRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH","chats");
   const chatQuery = query(chatRef, orderBy("timestamp"));
 
   onSnapshot(chatQuery, (snapshot) => {

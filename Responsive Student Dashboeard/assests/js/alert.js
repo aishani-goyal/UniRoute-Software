@@ -113,7 +113,7 @@ function showMCQPopup() {
             const { studentId, name, routeNo } = studentData;
 
             // Create the alert with student info
-            await setDoc(doc(db, "Emergency_Alert", studentId), {
+            await setDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert", studentId), {
                 name: name,
                 routeNo: routeNo,
                 message: selectedEmergency,
@@ -134,12 +134,21 @@ function showMCQPopup() {
         popup.remove();
     });
 }
-
-// Show status message
+// Function to show success/failure popups
 function showPopup(message, isSuccess) {
-    const alertStatus = document.getElementById("alert-status");
-    alertStatus.innerText = message;
-    alertStatus.style.color = isSuccess ? "green" : "red";
+    const popup = document.createElement("div");
+    popup.className = "popup";
+    popup.innerHTML = `
+        <div class="popup-content">
+            <p>${message}</p>
+            <button id="close-popup">OK</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    document.getElementById("close-popup").addEventListener("click", () => {
+        popup.remove();
+    });
 }
 
 // ✅ Corrected button ID

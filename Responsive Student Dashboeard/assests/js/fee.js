@@ -88,9 +88,8 @@ async function loadStudentData() {
 }
 
 // Step 2: Check Payment Status & Update UI
-// Step 2: Check Payment Status & Update UI
 async function checkAndUpdatePaymentStatus(name, email, studentId) {
-  const feeDocRef = doc(db, "Fees", studentId);
+  const feeDocRef = doc(db ,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
   const feeSnap = await getDoc(feeDocRef);
 
   if (feeSnap.exists() && feeSnap.data().status === "Paid") {
@@ -116,7 +115,6 @@ async function checkAndUpdatePaymentStatus(name, email, studentId) {
   }
 }
 
-
 // Step 3: Handle Payment Button Click
 payButton.addEventListener("click", async () => {
   if (!studentId) {
@@ -128,7 +126,7 @@ payButton.addEventListener("click", async () => {
   const email = studentEmailEl.innerText;
 
   // Save payment record with status "Pending"
-  const feeDocRef = doc(db, "Fees", studentId);
+  const feeDocRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
   await setDoc(feeDocRef, {
     name,
     email,
@@ -176,32 +174,30 @@ payButton.addEventListener("click", async () => {
 
 // Update payment status in Firebase after successful payment for the logged-in student
 async function updatePaymentStatus(paymentId) {
-  // Step 1: Fetch the logged-in student's data using email
   const studentsRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Students");
   const q = query(studentsRef, where("email", "==", loggedInEmail));
   const querySnapshot = await getDocs(q);
 
   if (!querySnapshot.empty) {
-    const studentDoc = querySnapshot.docs[0]; // Get the logged-in student document
-    const studentId = studentDoc.id; // Use studentId from document ID
+    const studentDoc = querySnapshot.docs[0];
+    // Don't redeclare studentId — use the global one
 
-    // Step 2: Update main fee document in the Fees collection for the logged-in student
-    const feeDocRef = doc(db, "Fees", studentId);
+    // Update Fees main doc
+    const feeDocRef = doc(db,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
     await updateDoc(feeDocRef, {
       status: "Paid",
       paymentId: paymentId,
       timestamp: new Date(),
     });
 
-    // Step 3: Fetch and update all monthly fees with status "Pending"
-    const monthlyFeesRef = collection(db, "Fees", studentId, "MonthlyFees");
-    const q = query(monthlyFeesRef, where("status", "==", "Pending"));
-    const querySnapshot = await getDocs(q);
+    // Update monthly fees
+    const monthlyFeesRef = collection(db,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId, "MonthlyFees");
+    const monthlyQuery = query(monthlyFeesRef, where("status", "==", "Pending"));
+    const monthlySnapshot = await getDocs(monthlyQuery);
 
     const updatePromises = [];
-
-    querySnapshot.forEach((docSnap) => {
-      const monthlyFeeDocRef = doc(db, "Fees", studentId, "MonthlyFees", docSnap.id);
+    monthlySnapshot.forEach((docSnap) => {
+      const monthlyFeeDocRef = doc(db,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId, "MonthlyFees", docSnap.id);
       updatePromises.push(updateDoc(monthlyFeeDocRef, {
         status: "Paid",
         paymentId: paymentId,
@@ -209,21 +205,19 @@ async function updatePaymentStatus(paymentId) {
       }));
     });
 
-    // Wait for all monthly fee updates to complete
     await Promise.all(updatePromises);
 
-    // Step 4: Update the student's fee status in the Students collection
+    // Update student doc
     const studentDocRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Students", studentId);
     await updateDoc(studentDocRef, {
-      feeStatus: "Paid",   // Update fee status in student document
-      paymentId: paymentId, // Store payment ID in student document
-      paymentDate: new Date(), // Store payment date
+      feeStatus: "Paid",
+      paymentId: paymentId,
+      paymentDate: new Date(),
     });
 
-    // Step 5: Update the UI
-    feeStatusEl.innerText = "Paid";
-    feeStatusEl.classList.remove("pending", "processing");
-    feeStatusEl.classList.add("paid");
+    // ✅ Refresh UI based on new status
+    await checkAndUpdatePaymentStatus(studentDoc.data().name, studentDoc.data().email, studentId);
+
   } else {
     alert("Student not found!");
   }

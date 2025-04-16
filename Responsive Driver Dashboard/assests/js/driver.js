@@ -273,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      await setDoc(doc(db, "Location", String(driverRouteNo)), {
+      await setDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Location", String(driverRouteNo)), {
         latitude: latitude,
         longitude: longitude,
         driverName: driverName,
@@ -289,7 +289,7 @@ document.addEventListener("DOMContentLoaded", function () {
   async function removeLocationFromFirestore() {
     if (!driverRouteNo) return;
     try {
-      await deleteDoc(doc(db, "Location", String(driverRouteNo)));
+      await deleteDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH","Location", String(driverRouteNo)));
       console.log("Location removed from Firebase for route:", driverRouteNo);
     } catch (error) {
       console.error("Error removing document:", error);

@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch Location Data based on route number
   async function fetchLocationData(routeNo) {
-    const locationRef = doc(db, "Location", routeNo);
+    const locationRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Location", routeNo);
 
     try {
       const docSnap = await getDoc(locationRef);
@@ -234,7 +234,7 @@ async function updateFeeStatus() {
       const studentId = studentData.studentId;
 
       // Step 2: Get Fees data for that studentId
-      const feeRef = doc(db, "Fees", studentId);
+      const feeRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
       const feeSnap = await getDoc(feeRef);
 
       if (feeSnap.exists()) {
@@ -303,6 +303,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Step 2: Go to Attendance/{roll}/{today} and check if any doc has status "Present"
     const attendanceSubCollection = collection(
       db,
+      "institutes", "iEe3BjNAYl4nqKJzCXlH",
       "Attendance",
       studentRoll,
       today

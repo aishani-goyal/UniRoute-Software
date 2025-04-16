@@ -78,7 +78,7 @@ async function fetchDriverName() {
 await fetchDriverName();
 
 // Reference Firestore collection with ordering by timestamp
-const chatCollection = collection(db, "chats");
+const chatCollection = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH","chats");
 const chatQuery = query(chatCollection, orderBy("timestamp"));
 
 const chatBox = document.getElementById("chat-box");

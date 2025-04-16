@@ -172,6 +172,7 @@ async function adminLogin() {
 
     if (foundAdminData.password === adminPassword) {
       alert("✅ Admin Login Successful!");
+      localStorage.setItem("AdminEmail", foundAdminData.email);
       const rememberMe = document.getElementById("rememberMe");
       if (rememberMe.checked) {
         localStorage.setItem("UnirouteUser", data);

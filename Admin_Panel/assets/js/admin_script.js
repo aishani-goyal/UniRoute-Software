@@ -252,32 +252,37 @@ document.addEventListener("DOMContentLoaded", function () {
       snapshot.forEach(async (alertDoc) => {
         const alertData = alertDoc.data();
         const { message, timestamp, driverName, driverRoute, name, routeNo } = alertData;
-
+      
         let senderInfo = "";
-
-        // Check for student alerts based on message content
+      
+        // ✅ Student Speed Alert
         if (message && message.includes("🚨 Speed Alert")) {
           senderInfo = `🚨 Student Speed Alert\nName: ${name}\nRoute: ${routeNo}\nTime: ${timestamp}\nMessage: ${message}`;
         } 
-        // Check for driver alerts based on message content (check for "from Driver")
-        else if (message && message.includes("from Driver")) {
-          // Use driverName and driverRoute directly from Emergency_Alert
-          const driverNameToDisplay = driverName ?? "Unknown Driver"; // Fallback to "Unknown Driver" if not available
-          const driverRouteToDisplay = driverRoute ?? "Unknown Route"; // Fallback to "Unknown Route" if not available
-
-          senderInfo = `🔥 Driver Emergency Alert\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\nTime: ${timestamp}\nMessage: ${message}`;
-        } else {
-          senderInfo = `👤 Unknown sender`;
+        // ✅ Student Bus Breakdown Alert
+        else if (message && message.includes("Bus Breakdown Alert from Student")) {
+          senderInfo = `🚧 Student Breakdown Alert\nName: ${name}\nRoute: ${routeNo}\nTime: ${timestamp}\nMessage: ${message}`;
         }
-
-        // Show the alert popup with information
+        // ✅ Driver Alert
+        else if (message && message.includes("from Driver")) {
+          const driverNameToDisplay = driverName ?? "Unknown Driver";
+          const driverRouteToDisplay = driverRoute ?? "Unknown Route";
+      
+          senderInfo = `🔥 Driver Emergency Alert\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\nTime: ${timestamp}\nMessage: ${message}`;
+        } 
+        // ❌ Unknown Alert
+        else {
+          senderInfo = `👤 Unknown sender\nTime: ${timestamp}\nMessage: ${message}`;
+        }
+      
         const confirmDelete = confirm(`${senderInfo}\n\nClick OK to acknowledge and delete this alert.`);
-
+      
         if (confirmDelete) {
           await deleteDoc(doc(db, "Emergency_Alert", alertDoc.id));
           console.log(`Alert with ID ${alertDoc.id} removed from Firestore.`);
         }
       });
+      
     } catch (error) {
       console.error("Error checking emergency alerts:", error);
     }

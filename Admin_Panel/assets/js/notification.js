@@ -20,93 +20,87 @@ toggle.onclick = function () {
   navigation.classList.toggle("active");
   main.classList.toggle("active");
 };
-
-// Firebase setup
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  setDoc,
-  doc,
-  onSnapshot,
-  query,
-  orderBy,
-} from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      collection,
+      setDoc,
+      doc,
+      onSnapshot,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
-  authDomain: "uniroute-3dda9.firebaseapp.com",
-  projectId: "uniroute-3dda9",
-  storageBucket: "uniroute-3dda9.appspot.com",
-  messagingSenderId: "465796690799",
-  appId: "1:465796690799:web:cab2801937f2d4cac7ee9a",
-  measurementId: "G-VWEFWH2517",
-};
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
+      authDomain: "uniroute-3dda9.firebaseapp.com",
+      projectId: "uniroute-3dda9",
+      storageBucket: "uniroute-3dda9.appspot.com",
+      messagingSenderId: "465796690799",
+      appId: "1:465796690799:web:cab2801937f2d4cac7ee9a",
+      measurementId: "G-VWEFWH2517",
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-// Get admin name from localStorage
-let adminName = null;
-const storedUser = localStorage.getItem("UnirouteUser"); // no JSON.parse
+    // Get admin name from localStorage
+    let adminName = null;
+    const storedUser = localStorage.getItem("AdminEmail");
+    if (storedUser) {
+      adminName = storedUser;
+      console.log("Logged-in Admin Email (Admin Name):", adminName);
+    } else {
+      alert("Admin not logged in.");
+    }
 
-if (storedUser) {
-  adminName = storedUser; // this is just the email
-  console.log("Logged-in Admin Email (Admin Name):", adminName);
-}
+    // Firestore path
+    const chatCollection = collection(
+      db,
+      "institutes",
+      "iEe3BjNAYl4nqKJzCXlH",
+      "community_chat"
+    );
+    const chatQuery = query(chatCollection, orderBy("timestamp"));
 
+    const chatBox = document.getElementById("chat-box");
 
-// Firestore community chat path
-const chatCollection = collection(
-  db,
-  "institutes",
-  "iEe3BjNAYl4nqKJzCXlH",
-  "community_chat"
-);
-const chatQuery = query(chatCollection, orderBy("timestamp"));
+    // Send message function
+    const sendMessage = async () => {
+      const messageInput = document.getElementById("message-input");
+      const message = messageInput.value.trim();
 
-const chatBox = document.getElementById("chat-box");
+      if (message && adminName) {
+        try {
+          const timestamp = new Date().toISOString();
+          await setDoc(doc(chatCollection, timestamp), {
+            text: message,
+            sender: adminName,
+            timestamp: timestamp,
+          });
+          console.log("Message sent");
+          messageInput.value = "";
+        } catch (error) {
+          console.error("Error sending message:", error);
+        }
+      }
+    };
 
-// Send chat message
-window.sendMessage = async function () {
-  const messageInput = document.getElementById("message-input");
-  const message = messageInput.value.trim();
+    // Make available to button onclick
+    window.sendMessage = sendMessage;
 
-  if (message && adminName) {
-    try {
-      const timestampID = new Date().toISOString();
-      await setDoc(doc(chatCollection, timestampID), {
-        text: message,
-        sender: adminName,
-        timestamp: timestampID,
+    // Real-time chat updates
+    onSnapshot(chatQuery, (snapshot) => {
+      chatBox.innerHTML = "";
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.textContent = data.text;
+        div.className = `message ${
+          data.sender === adminName ? "sent" : "received"
+        }`;
+        chatBox.appendChild(div);
       });
-
-      console.log("Message sent successfully");
-    } catch (err) {
-      console.error("Error sending message:", err);
-    }
-
-    messageInput.value = "";
-  }
-};
-
-// Realtime chat rendering
-onSnapshot(chatQuery, (snapshot) => {
-  chatBox.innerHTML = "";
-
-  snapshot.forEach((doc) => {
-    const messageData = doc.data();
-    if (messageData.text) {
-      const messageElement = document.createElement("div");
-
-      messageElement.textContent = messageData.text;
-
-      const isCurrentUser = messageData.sender === adminName;
-      messageElement.className = `message ${isCurrentUser ? "sent" : "received"}`;
-
-      chatBox.appendChild(messageElement);
-    }
-  });
-
-  chatBox.scrollTop = chatBox.scrollHeight;
-});
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });

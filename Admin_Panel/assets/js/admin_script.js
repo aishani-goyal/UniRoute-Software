@@ -255,25 +255,52 @@ document.addEventListener("DOMContentLoaded", function () {
       
         let senderInfo = "";
       
-        // ✅ Student Speed Alert
-        if (message && message.includes("🚨 Speed Alert")) {
-          senderInfo = `🚨 Student Speed Alert\nName: ${name}\nRoute: ${routeNo}\nTime: ${timestamp}\nMessage: ${message}`;
-        } 
-        // ✅ Student Bus Breakdown Alert
-        else if (message && message.includes("Bus Breakdown Alert from Student")) {
-          senderInfo = `🚧 Student Breakdown Alert\nName: ${name}\nRoute: ${routeNo}\nTime: ${timestamp}\nMessage: ${message}`;
-        }
-        // ✅ Driver Alert
-        else if (message && message.includes("from Driver")) {
-          const driverNameToDisplay = driverName ?? "Unknown Driver";
-          const driverRouteToDisplay = driverRoute ?? "Unknown Route";
-      
-          senderInfo = `🔥 Driver Emergency Alert\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\nTime: ${timestamp}\nMessage: ${message}`;
-        } 
-        // ❌ Unknown Alert
-        else {
-          senderInfo = `👤 Unknown sender\nTime: ${timestamp}\nMessage: ${message}`;
-        }
+        // ✅ Student & Driver Alerts Handling
+if (message) {
+  // 🚨 Common Fields
+  const baseTime = `Time: ${timestamp}`;
+  const baseMsg = `Message: ${message}`;
+
+  // 🚨 Student Alerts
+  if (message.includes("from Student")) {
+    if (message.includes("Accident")) {
+      senderInfo = `🚨 Student Accident Alert\nName: ${name}\nRoute: ${routeNo}\n${baseTime}\n${baseMsg}`;
+    } else if (message.includes("Bus Breakdown")) {
+      senderInfo = `🚧 Student Breakdown Alert\nName: ${name}\nRoute: ${routeNo}\n${baseTime}\n${baseMsg}`;
+    } else if (message.includes("Medical Emergency")) {
+      senderInfo = `🏥 Student Medical Emergency\nName: ${name}\nRoute: ${routeNo}\n${baseTime}\n${baseMsg}`;
+    } else if (message.includes("Fire Emergency")) {
+      senderInfo = `🔥 Student Fire Emergency\nName: ${name}\nRoute: ${routeNo}\n${baseTime}\n${baseMsg}`;
+    } else if (message.includes("Speed Alert")) {
+      senderInfo = `🚨 Student Speed Alert\nName: ${name}\nRoute: ${routeNo}\n${baseTime}\n${baseMsg}`;
+    } else {
+      senderInfo = `👤 Unknown Student Alert\nName: ${name}\nRoute: ${routeNo}\n${baseTime}\n${baseMsg}`;
+    }
+  }
+
+  // 🚨 Driver Alerts
+  else if (message.includes("from Driver")) {
+    const driverNameToDisplay = driverName ?? "Unknown Driver";
+    const driverRouteToDisplay = driverRoute ?? "Unknown Route";
+
+    if (message.includes("Accident")) {
+      senderInfo = `🚨 Driver Accident Alert\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\n${baseTime}\n${baseMsg}`;
+    } else if (message.includes("Bus Breakdown")) {
+      senderInfo = `🚧 Driver Breakdown Alert\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\n${baseTime}\n${baseMsg}`;
+    } else if (message.includes("Medical Emergency")) {
+      senderInfo = `🏥 Driver Medical Emergency\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\n${baseTime}\n${baseMsg}`;
+    } else if (message.includes("Fire Emergency")) {
+      senderInfo = `🔥 Driver Fire Emergency\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\n${baseTime}\n${baseMsg}`;
+    } else {
+      senderInfo = `👤 Unknown Driver Alert\nDriver Name: ${driverNameToDisplay}\nRoute: ${driverRouteToDisplay}\n${baseTime}\n${baseMsg}`;
+    }
+  }
+
+  // ❌ Unknown Sender
+  else {
+    senderInfo = `👤 Unknown Sender\n${baseTime}\n${baseMsg}`;
+  }
+}
       
         const confirmDelete = confirm(`${senderInfo}\n\nClick OK to acknowledge and delete this alert.`);
       

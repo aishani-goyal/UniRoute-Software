@@ -2,9 +2,7 @@
 let list = document.querySelectorAll(".navigation li");
 
 function activeLink() {
-  list.forEach((item) => {
-    item.classList.remove("hovered");
-  });
+  list.forEach((item) => item.classList.remove("hovered"));
   this.classList.add("hovered");
 }
 
@@ -50,9 +48,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 let driverName = null;
+let driverRoute = null;
 
-// Get logged-in driver's name based on phone from localStorage
-async function fetchDriverName() {
+// Get logged-in driver's name and route from Firestore
+async function fetchDriverDetails() {
   const phone = localStorage.getItem("userPhone");
   if (!phone) return;
 
@@ -67,34 +66,41 @@ async function fetchDriverName() {
   const snapshot = await getDocs(q);
 
   if (!snapshot.empty) {
-    driverName = snapshot.docs[0].data().name;
-    console.log("Logged-in Driver Name:", driverName);
+    const data = snapshot.docs[0].data();
+    driverName = data.name;
+    driverRoute = data.route;
+    console.log("Driver:", driverName, "| Route:", driverRoute);
   } else {
     console.error("Driver not found for phone:", phone);
   }
 }
 
-// Call the function to get driver name
-await fetchDriverName();
+await fetchDriverDetails();
 
-// Reference Firestore collection with ordering by timestamp
-const chatCollection = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH","chats");
+// Reference chat collection
+const chatCollection = collection(
+  db,
+  "institutes",
+  "iEe3BjNAYl4nqKJzCXlH",
+  "chats"
+);
 const chatQuery = query(chatCollection, orderBy("timestamp"));
 
 const chatBox = document.getElementById("chat-box");
 
-// Send message with actual driver's name
+// Send message with route
 window.sendMessage = async function () {
   const messageInput = document.getElementById("message-input");
   const message = messageInput.value.trim();
 
-  if (message && driverName) {
+  if (message && driverName && driverRoute) {
     try {
       const timestampID = new Date().toISOString();
       await setDoc(doc(chatCollection, timestampID), {
         text: message,
         sender: driverName,
         timestamp: timestampID,
+        route: driverRoute,
       });
 
       console.log("Message sent successfully");
@@ -106,20 +112,18 @@ window.sendMessage = async function () {
   }
 };
 
-// Display messages in real-time
+// Real-time message listener
 onSnapshot(chatQuery, (snapshot) => {
   chatBox.innerHTML = "";
 
   snapshot.forEach((doc) => {
     const messageData = doc.data();
 
-    if (messageData.text) {
+    // Show messages for same route only
+    if (messageData.text && messageData.route === driverRoute) {
       const messageElement = document.createElement("div");
+      messageElement.textContent = messageData.text;
 
-      // Show only the message text, without sender name
-      messageElement.textContent = `${messageData.text}`;
-
-      // If the sender is the logged-in driver, apply 'sent' style
       const isCurrentUser = messageData.sender === driverName;
       messageElement.className = `message ${isCurrentUser ? "sent" : "received"}`;
 
@@ -128,4 +132,4 @@ onSnapshot(chatQuery, (snapshot) => {
   });
 
   chatBox.scrollTop = chatBox.scrollHeight;
-});
+  });

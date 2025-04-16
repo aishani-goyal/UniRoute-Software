@@ -19,7 +19,8 @@ toggle.onclick = function () {
   navigation.classList.toggle("active");
   main.classList.toggle("active");
 };
-// Import Firebase modules
+
+// Firebase Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
 import {
   getFirestore,
@@ -33,7 +34,7 @@ import {
   where,
 } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
 
-// Firebase configuration
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCs3IGjFjg1Mj0Sb7h2WNfUTm4uefNlXcI",
   authDomain: "uniroute-3dda9.firebaseapp.com",
@@ -52,8 +53,9 @@ const chatBox = document.getElementById("chat-box");
 
 let studentRoll = null;
 let studentName = null;
+let studentRoute = null; // ✅ Store the route number
 
-// ✅ Get student's roll number and name from Firestore
+// ✅ Get student's roll number, name, and route from Firestore
 async function getStudentDetailsByEmail(email) {
   const studentsRef = collection(
     db,
@@ -69,33 +71,34 @@ async function getStudentDetailsByEmail(email) {
     return {
       roll: studentData.roll,
       name: studentData.name,
+      route: studentData.routeNo?.toString() || "", // ✅ Ensure route is a string
     };
   } else {
     throw new Error("Student not found for this email.");
   }
 }
 
-// ✅ Send message with student's name as sender and timestamp as document ID
+// ✅ Send message
 window.sendMessage = async function () {
   const messageInput = document.getElementById("message-input");
   const message = messageInput.value.trim();
 
-  if (message && studentRoll && studentName) {
+  if (message && studentRoll && studentName && studentRoute) {
     try {
-      // Create a timestamp for the message (current date)
-      const timestamp = new Date().toISOString(); // Use timestamp as the document ID
-
-      // Reference to the 'chats' collection for storing messages
-      const chatRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "chats");
-
-      // Use doc() with the timestamp as the document ID
+      const timestamp = new Date().toISOString();
+      const chatRef = collection(
+        db,
+        "institutes",
+        "iEe3BjNAYl4nqKJzCXlH",
+        "chats"
+      );
       const messageDocRef = doc(chatRef, timestamp);
 
-      // Store the message with timestamp as the document ID
       await setDoc(messageDocRef, {
         text: message,
         sender: studentName,
-        timestamp: timestamp, // Save timestamp as part of the message
+        timestamp: timestamp,
+        route: studentRoute, // ✅ Save route with message
       });
 
       console.log("Message sent");
@@ -103,50 +106,46 @@ window.sendMessage = async function () {
       console.error("Error sending message:", err);
     }
 
-    messageInput.value = ""; // Clear the input field after sending
+    messageInput.value = ""; // Clear the input
   }
 };
 
-// ✅ Display real-time messages from all chats
+// ✅ Display messages for same route only
 function listenForMessages() {
-  const chatRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH","chats");
+  const chatRef = collection(
+    db,
+    "institutes",
+    "iEe3BjNAYl4nqKJzCXlH",
+    "chats"
+  );
   const chatQuery = query(chatRef, orderBy("timestamp"));
 
   onSnapshot(chatQuery, (snapshot) => {
-    chatBox.innerHTML = ""; // Clear existing chat messages
+    chatBox.innerHTML = ""; // Clear previous messages
 
     snapshot.forEach((doc) => {
       const messageData = doc.data();
 
-      if (messageData.text) {
+      // ✅ Filter messages by route
+      if (messageData.text && messageData.route === studentRoute) {
         const messageElement = document.createElement("div");
         messageElement.textContent = messageData.text;
 
-        // ✅ Apply green color if the message sender is the logged-in student
         const isCurrentStudent = messageData.sender === studentName;
-        messageElement.className = `message ${
-          isCurrentStudent ? "sent" : "received"
-        }`;
+        messageElement.className = `message ${isCurrentStudent ? "sent" : "received"}`;
 
-        // Add color styles
-        if (isCurrentStudent) {
-          messageElement.style.backgroundColor = "#E1FFC7";
-          messageElement.style.color = "black";
-        } else {
-          messageElement.style.backgroundColor = "white";
-          messageElement.style.color = "black";
-        }
+        messageElement.style.backgroundColor = isCurrentStudent ? "#E1FFC7" : "white";
+        messageElement.style.color = "black";
 
         chatBox.appendChild(messageElement);
       }
     });
 
-    // Scroll to the bottom of the chat box after new messages
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to latest
   });
 }
 
-// ✅ On page load — get student name & roll and start listening
+// ✅ On page load
 document.addEventListener("DOMContentLoaded", async () => {
   const email = localStorage.getItem("loggedInEmail");
 
@@ -159,7 +158,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const details = await getStudentDetailsByEmail(email);
     studentRoll = details.roll;
     studentName = details.name;
-    console.log("Student loaded:", studentName, studentRoll);
+    studentRoute = details.route;
+    console.log("Student loaded:", studentName, studentRoll, studentRoute);
 
     listenForMessages();
   } catch (error) {

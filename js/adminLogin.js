@@ -54,6 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", (event) => {
       event.preventDefault();
       let role = roleDropdown.value;
+      const instituteName = document.getElementById("instituteName").value.trim();
+      localStorage.setItem("InstituteName", instituteName);    
       if (role === "student") {
         studentAuthorityLogin(role);
       } else if (role === "driver") {
@@ -71,13 +73,20 @@ async function studentAuthorityLogin(role) {
   let userId = document.getElementById("userId").value;
   let password = document.getElementById("password").value;
   let data1 = "";
+  // Get institute ID from localStorage
+  const instituteId = localStorage.getItem("InstituteName");
+  if (!instituteId) {
+    alert("⚠ Institute ID not found in localStorage!");
+    return;
+  }
+
 
   if (userId && password) {
     // Query Firestore
     const userRef = collection(
       db,
       "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
+      instituteId,
       "User_password"
     );
     const q = query(userRef, where("email", "==", userId));
@@ -135,6 +144,13 @@ async function adminLogin() {
   const adminEmail = document.getElementById("adminEmail").value.trim();
   const adminPassword = document.getElementById("adminPassword").value.trim();
   let data = "";
+  // Get institute ID from localStorage
+  const instituteId = localStorage.getItem("InstituteName");
+  if (!instituteId) {
+    alert("⚠ Institute ID not found in localStorage!");
+    return;
+  }
+
   if (!adminEmail || !adminPassword) {
     alert("⚠ Please enter both Email and Password!");
     return; // Stop function execution if fields are empty
@@ -149,7 +165,7 @@ async function adminLogin() {
       const adminDocRef = doc(
         db,
         "institutes",
-        instituteDoc.id,
+        instituteId,
         "adminDetails",
         "admin"
       );
@@ -201,12 +217,17 @@ window.sendOTP = async function sendOTP() {
   const phone = document.getElementById("phone").value;
   const last10 = phone.replace(/[^0-9]/g, "").slice(-10); // Extract last 10 digits
   localStorage.setItem("userPhone", last10);              // Store it
+  const instituteId = localStorage.getItem("InstituteName"); // Get from localStorage
+  if (!instituteId) {
+    alert("⚠ Institute ID not found in localStorage!");
+    return;
+  }
 
   try {
     const res = await fetch(`${API_BASE_URL}/send-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone }),
+      body: JSON.stringify({ phone, instituteId }),
       credentials: "include",
     });
 
@@ -227,12 +248,17 @@ window.verifyOTP = async function verifyOTP() {
   const otp = document.getElementById("otp").value;
   const phone = document.getElementById("phone").value; // Get phone number
   const rem = document.getElementById("rem");
+  const instituteId = localStorage.getItem("InstituteName");
+  if (!instituteId) {
+    alert("⚠ Institute ID not found in localStorage!");
+    return;
+  }
 
   try {
     const res = await fetch(`${API_BASE_URL}/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ otp }),
+      body: JSON.stringify({ otp, instituteId }),
       credentials: "include",
     });
 

@@ -56,13 +56,13 @@ function getTodayDate() {
   const yyyy = today.getFullYear();
   return `${dd}-${mm}-${yyyy}`;
 }
-
+const instituteId = localStorage.getItem("InstituteName");
 // 🔍 Fetch roll number from logged in email
 async function getRollFromEmail(email) {
   const studentsRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Students"
   );
   const q = query(studentsRef, where("email", "==", email));
@@ -79,7 +79,7 @@ async function markAttendance(roll) {
   const attendancePath = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Attendance",
     roll,
     dateKey
@@ -156,7 +156,7 @@ async function fetchAttendanceHistory(roll) {
     const attendanceRef = collection(
       db,
       "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
+      instituteId,
       "Attendance",
       roll,
       dateStr

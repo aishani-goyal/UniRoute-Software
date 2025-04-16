@@ -64,13 +64,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const studentEmail = localStorage.getItem("loggedInEmail");
-
+  const instituteId = localStorage.getItem("InstituteName");
   if (studentEmail) {
     try {
       const studentsCollection = collection(
         db,
         "institutes",
-        "iEe3BjNAYl4nqKJzCXlH",
+        instituteId,
         "Students"
       );
       const q = query(studentsCollection, where("email", "==", studentEmail));
@@ -144,7 +144,7 @@ document
       const feedbackDocRef = doc(
         db,
         "institutes",
-        "iEe3BjNAYl4nqKJzCXlH",
+        instituteId,
         "Feedback",
         safeEmail
       );

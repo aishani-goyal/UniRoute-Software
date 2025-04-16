@@ -34,23 +34,24 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const instituteId = localStorage.getItem("InstituteName");
 
 // Reference to Firestore subcollections under a specific institute
 const routesRef = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("routes");
 const vehiclesRef = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("vehicles");
 const driversRef = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("drivers");
 const vendorsRef = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("vendors"); // ✅ Corrected vendors collection reference
 
 // Function to save vehicle details
@@ -139,7 +140,7 @@ document.getElementById("save-routes").addEventListener("click", async () => {
   const routesRef = firebase
     .firestore()
     .collection("institutes")
-    .doc("iEe3BjNAYl4nqKJzCXlH")
+    .doc(instituteId)
     .collection("routes");
 
   try {
@@ -209,7 +210,7 @@ document.getElementById("save-routes").addEventListener("click", async () => {
 
 function loadRoutesData() {
   db.collection("institutes")
-    .doc("iEe3BjNAYl4nqKJzCXlH")
+    .doc(instituteId)
     .collection("routes")
     .get()
     .then((querySnapshot) => {
@@ -253,7 +254,7 @@ function loadRoutesData() {
 
 function loadVehiclesData() {
   db.collection("institutes")
-    .doc("iEe3BjNAYl4nqKJzCXlH")
+    .doc(instituteId)
     .collection("vehicles")
     .get()
     .then((querySnapshot) => {
@@ -417,11 +418,11 @@ async function saveChanges(tableId, ref) {
 // Firestore References
 const routes = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("routes");
 const vehicles = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("vehicles");
 
 // Apply to both Routes and Vehicles tables
@@ -502,7 +503,7 @@ async function uploadRoutesToFirestore(data) {
 
     return db
       .collection("institutes")
-      .doc("iEe3BjNAYl4nqKJzCXlH")
+      .doc(instituteId)
       .collection("routes")
       .doc(docId)
       .set(routeData)
@@ -565,7 +566,7 @@ async function uploadVehiclesToFirestore(data) {
 
     return db
       .collection("institutes")
-      .doc("iEe3BjNAYl4nqKJzCXlH")
+      .doc(instituteId)
       .collection("vehicles")
       .doc(docId)
       .set(vehicleData)

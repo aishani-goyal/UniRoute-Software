@@ -41,10 +41,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const driversTable = document.querySelector("#drivers-table tbody");
   const addDriverBtn = document.getElementById("add-driver");
   const saveDriverBtn = document.getElementById("save-drivers");
-  
+  const instituteId = localStorage.getItem("InstituteName");
+
   const driversRef = db
     .collection("institutes")
-    .doc("iEe3BjNAYl4nqKJzCXlH")
+    .doc(instituteId)
     .collection("Drivers");
   
   const usedIds = new Set();
@@ -208,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const db = firebase.firestore();
   const driversRef = db
     .collection("institutes")
-    .doc("iEe3BjNAYl4nqKJzCXlH")
+    .doc(instituteId)
     .collection("Drivers");
   const driversTable = document.querySelector("#drivers-table tbody");
 
@@ -309,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const vendorRef = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("Vendors")
   .doc("mainVendor");
 

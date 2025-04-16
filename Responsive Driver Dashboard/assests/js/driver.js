@@ -48,6 +48,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const instituteId = localStorage.getItem("InstituteName");
 
 // Function to count students
 async function countStudentsOnDriverRoute() {
@@ -61,7 +62,7 @@ async function countStudentsOnDriverRoute() {
   const driversRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Drivers"
   );
   const driverQuery = query(driversRef, where("contact", "==", phone));
@@ -87,7 +88,7 @@ async function countStudentsOnDriverRoute() {
   const studentsRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Students"
   );
   const studentQuery = query(studentsRef, where("routeNo", "==", String(driverRoute)));
@@ -111,7 +112,7 @@ async function showDriverVehicleNumber() {
   const driversRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Drivers"
   );
   const driverQuery = query(driversRef, where("contact", "==", phone));
@@ -148,7 +149,7 @@ async function showAttendanceStatus() {
   const driversRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Drivers"
   );
   const driverQuery = query(driversRef, where("contact", "==", phone));
@@ -174,7 +175,7 @@ async function showAttendanceStatus() {
   const studentsRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Students"
   );
   const studentQuery = query(studentsRef, where("routeNo", "==", String(driverRoute)));
@@ -189,7 +190,7 @@ async function showAttendanceStatus() {
   const attendanceRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Attendance"
   );
 
@@ -249,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const driversRef = collection(
       db,
       "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
+      instituteId,
       "Drivers"
     );
     const driverQuery = query(driversRef, where("contact", "==", phone));
@@ -273,7 +274,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     try {
-      await setDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Location", String(driverRouteNo)), {
+      await setDoc(doc(db, `institutes/${instituteId}/Location`, String(driverRouteNo)), {
         latitude: latitude,
         longitude: longitude,
         driverName: driverName,
@@ -289,7 +290,8 @@ document.addEventListener("DOMContentLoaded", function () {
   async function removeLocationFromFirestore() {
     if (!driverRouteNo) return;
     try {
-      await deleteDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH","Location", String(driverRouteNo)));
+      await deleteDoc(doc(db, `institutes/${instituteId}/Location`, String(driverRouteNo)));
+
       console.log("Location removed from Firebase for route:", driverRouteNo);
     } catch (error) {
       console.error("Error removing document:", error);

@@ -34,9 +34,11 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+const instituteId = localStorage.getItem("InstituteName");
+
 const studentsRef = db
   .collection("institutes")
-  .doc("iEe3BjNAYl4nqKJzCXlH")
+  .doc(instituteId)
   .collection("Students");
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -364,7 +366,7 @@ document.addEventListener("click", async function (e) {
       // ✅ Step 1: Check if password already sent
       const existingDoc = await db
         .collection("institutes")
-        .doc("iEe3BjNAYl4nqKJzCXlH")
+        .doc(instituteId)
         .collection("User_password")
         .doc(studentId)
         .get();
@@ -378,7 +380,7 @@ document.addEventListener("click", async function (e) {
       // ✅ Step 2: Fetch student data
       const studentDoc = await db
         .collection("institutes")
-        .doc("iEe3BjNAYl4nqKJzCXlH")
+        .doc(instituteId)
         .collection("Students")
         .doc(studentId)
         .get();
@@ -400,7 +402,7 @@ document.addEventListener("click", async function (e) {
       // ✅ Step 4: Save password to Firestore
       await db
         .collection("institutes")
-        .doc("iEe3BjNAYl4nqKJzCXlH")
+        .doc(instituteId)
         .collection("User_password")
         .doc(studentId)
         .set({
@@ -453,7 +455,7 @@ window.addEventListener("DOMContentLoaded", () => {
       try {
         const passwordDoc = await db
           .collection("institutes")
-          .doc("iEe3BjNAYl4nqKJzCXlH")
+          .doc(instituteId)
           .collection("User_password")
           .doc(studentId)
           .get();

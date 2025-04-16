@@ -54,12 +54,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase
     } else {
       alert("Admin not logged in.");
     }
-
+    const instituteId = localStorage.getItem("InstituteName");
     // Firestore path
     const chatCollection = collection(
       db,
       "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
+      instituteId,
       "community_chat"
     );
     const chatQuery = query(chatCollection, orderBy("timestamp"));

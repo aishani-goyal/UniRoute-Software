@@ -64,13 +64,10 @@ let studentContact = "7014253314"; // Default contact (can be updated based on F
 // Amount (can also be fetched dynamically)
 const feeAmount = "5000";
 feeAmountEl.innerText = feeAmount;
-
+const instituteId = localStorage.getItem("InstituteName");
 // Step 1: Fetch Student Info
 async function loadStudentData() {
-  const studentsRef = collection(
-    db,
-    "institutes/iEe3BjNAYl4nqKJzCXlH/Students"
-  );
+  const studentsRef = collection(db, "institutes", instituteId, "Students");
   const q = query(studentsRef, where("email", "==", loggedInEmail));
   const querySnapshot = await getDocs(q);
 
@@ -89,7 +86,7 @@ async function loadStudentData() {
 
 // Step 2: Check Payment Status & Update UI
 async function checkAndUpdatePaymentStatus(name, email, studentId) {
-  const feeDocRef = doc(db ,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
+  const feeDocRef = doc(db ,"institutes", instituteId, "Fees", studentId);
   const feeSnap = await getDoc(feeDocRef);
 
   if (feeSnap.exists() && feeSnap.data().status === "Paid") {
@@ -126,7 +123,7 @@ payButton.addEventListener("click", async () => {
   const email = studentEmailEl.innerText;
 
   // Save payment record with status "Pending"
-  const feeDocRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
+  const feeDocRef = doc(db, "institutes", instituteId, "Fees", studentId);
   await setDoc(feeDocRef, {
     name,
     email,
@@ -174,7 +171,7 @@ payButton.addEventListener("click", async () => {
 
 // Update payment status in Firebase after successful payment for the logged-in student
 async function updatePaymentStatus(paymentId) {
-  const studentsRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Students");
+  const studentsRef = collection(db, "institutes", instituteId, "Students");
   const q = query(studentsRef, where("email", "==", loggedInEmail));
   const querySnapshot = await getDocs(q);
 
@@ -183,7 +180,7 @@ async function updatePaymentStatus(paymentId) {
     // Don't redeclare studentId — use the global one
 
     // Update Fees main doc
-    const feeDocRef = doc(db,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
+    const feeDocRef = doc(db,"institutes", instituteId, "Fees", studentId);
     await updateDoc(feeDocRef, {
       status: "Paid",
       paymentId: paymentId,
@@ -191,13 +188,13 @@ async function updatePaymentStatus(paymentId) {
     });
 
     // Update monthly fees
-    const monthlyFeesRef = collection(db,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId, "MonthlyFees");
+    const monthlyFeesRef = collection(db,"institutes", instituteId, "Fees", studentId, "MonthlyFees");
     const monthlyQuery = query(monthlyFeesRef, where("status", "==", "Pending"));
     const monthlySnapshot = await getDocs(monthlyQuery);
 
     const updatePromises = [];
     monthlySnapshot.forEach((docSnap) => {
-      const monthlyFeeDocRef = doc(db,"institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId, "MonthlyFees", docSnap.id);
+      const monthlyFeeDocRef = doc(db,"institutes", instituteId, "Fees", studentId, "MonthlyFees", docSnap.id);
       updatePromises.push(updateDoc(monthlyFeeDocRef, {
         status: "Paid",
         paymentId: paymentId,
@@ -208,7 +205,7 @@ async function updatePaymentStatus(paymentId) {
     await Promise.all(updatePromises);
 
     // Update student doc
-    const studentDocRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Students", studentId);
+    const studentDocRef = doc(db, "institutes", instituteId, "Students", studentId);
     await updateDoc(studentDocRef, {
       feeStatus: "Paid",
       paymentId: paymentId,

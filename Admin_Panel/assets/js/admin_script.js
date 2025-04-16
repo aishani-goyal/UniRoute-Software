@@ -35,11 +35,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (document.getElementById("no-routes")) {
         document.getElementById("no-routes").remove();
       }
+    const instituteId = localStorage.getItem("InstituteName");
 
-      const routesRef = firebase.firestore()
-        .collection("institutes")
-        .doc("iEe3BjNAYl4nqKJzCXlH")
-        .collection("routes");
+    const routesRef = firebase.firestore()
+    .collection("institutes")
+    .doc(instituteId)  // Using dynamic instituteId from localStorage
+    .collection("routes");
 
       try {
         // Fetch existing IDs from Firestore
@@ -241,7 +242,8 @@ const db = getFirestore(app);
 document.addEventListener("DOMContentLoaded", function () {
   async function checkEmergencyAlerts() {
     try {
-      const emergencyAlertsRef = collection(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert");
+      const instituteId = localStorage.getItem("InstituteName");
+      const emergencyAlertsRef = collection(db, "institutes", instituteId, "Emergency_Alert");
       const snapshot = await getDocs(emergencyAlertsRef);
 
       if (snapshot.empty) {
@@ -303,9 +305,10 @@ if (message) {
 }
       
         const confirmDelete = confirm(`${senderInfo}\n\nClick OK to acknowledge and delete this alert.`);
-      
+        const instituteId = localStorage.getItem("InstituteName");
+
         if (confirmDelete) {
-          await deleteDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert", alertDoc.id));
+          await deleteDoc(doc(db, "institutes", instituteId, "Emergency_Alert", alertDoc.id));
           console.log(`Alert with ID ${alertDoc.id} removed from Firestore.`);
         }
       });

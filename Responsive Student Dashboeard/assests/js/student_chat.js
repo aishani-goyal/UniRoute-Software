@@ -54,13 +54,13 @@ const chatBox = document.getElementById("chat-box");
 let studentRoll = null;
 let studentName = null;
 let studentRoute = null; // ✅ Store the route number
-
+const instituteId = localStorage.getItem("InstituteName");
 // ✅ Get student's roll number, name, and route from Firestore
 async function getStudentDetailsByEmail(email) {
   const studentsRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Students"
   );
   const q = query(studentsRef, where("email", "==", email));
@@ -89,7 +89,7 @@ window.sendMessage = async function () {
       const chatRef = collection(
         db,
         "institutes",
-        "iEe3BjNAYl4nqKJzCXlH",
+        instituteId,
         "chats"
       );
       const messageDocRef = doc(chatRef, timestamp);
@@ -115,7 +115,7 @@ function listenForMessages() {
   const chatRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "chats"
   );
   const chatQuery = query(chatRef, orderBy("timestamp"));

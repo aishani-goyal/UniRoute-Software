@@ -90,9 +90,11 @@ function showMCQPopup() {
                 showPopup("❌ User phone not found. Please check your login details.", false);
                 return;
             }
+            const instituteId = localStorage.getItem("InstituteName");
 
-            // Query the Drivers collection based on contact (phone number)
-            const driversRef = collection(db, "institutes/iEe3BjNAYl4nqKJzCXlH/Drivers");
+            // Now correctly using the instituteId variable in the path
+            const driversRef = collection(db, `institutes/${instituteId}/Drivers`);
+
             const q = query(driversRef, where("contact", "==", userPhone));
             const querySnapshot = await getDocs(q);
 
@@ -107,7 +109,7 @@ function showMCQPopup() {
             const { name, route } = driverData;
 
             // Set document with routeNumber as ID and include name
-            await setDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert", route), {
+            await setDoc(doc(db, `institutes/${instituteId}/Emergency_Alert`, route), {
                 message: `${selectedEmergency} from Driver ${name}`,
                 timestamp: new Date().toLocaleString(),
                 driverName: name,

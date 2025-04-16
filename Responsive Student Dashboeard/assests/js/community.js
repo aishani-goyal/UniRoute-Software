@@ -44,12 +44,12 @@ const db = getFirestore(app);
 
 // Get admin name from localStorage (email stored as plain string)
 let adminName = localStorage.getItem("UnirouteUser");
-
+const instituteId = localStorage.getItem("InstituteName");
 // Firestore collection reference
 const chatCollection = collection(
   db,
   "institutes",
-  "iEe3BjNAYl4nqKJzCXlH",
+  instituteId,
   "community_chat"
 );
 const chatQuery = query(chatCollection, orderBy("timestamp"));

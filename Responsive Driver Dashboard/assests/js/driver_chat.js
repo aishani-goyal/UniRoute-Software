@@ -49,6 +49,7 @@ const db = getFirestore(app);
 
 let driverName = null;
 let driverRoute = null;
+const instituteId = localStorage.getItem("InstituteName");
 
 // Get logged-in driver's name and route from Firestore
 async function fetchDriverDetails() {
@@ -58,7 +59,7 @@ async function fetchDriverDetails() {
   const driversRef = collection(
     db,
     "institutes",
-    "iEe3BjNAYl4nqKJzCXlH",
+    instituteId,
     "Drivers"
   );
 
@@ -81,7 +82,7 @@ await fetchDriverDetails();
 const chatCollection = collection(
   db,
   "institutes",
-  "iEe3BjNAYl4nqKJzCXlH",
+  instituteId,
   "chats"
 );
 const chatQuery = query(chatCollection, orderBy("timestamp"));

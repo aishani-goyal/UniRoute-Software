@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch email from localStorage
   const studentEmail = localStorage.getItem("loggedInEmail");
-
+  const instituteId = localStorage.getItem("InstituteName");
   if (!studentEmail) {
     locationInfo.innerHTML = "❗ No email found. Please log in again.";
     return;
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const studentsRef = collection(
       db,
       "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
+      instituteId,
       "Students"
     );
 
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   // Fetch Location Data based on route number
   async function fetchLocationData(routeNo) {
-    const locationRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Location", routeNo);
+    const locationRef = doc(db, "institutes", instituteId, "Location", routeNo);
 
     try {
       const docSnap = await getDoc(locationRef);
@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const studentsRef = collection(
         db,
         "institutes",
-        "iEe3BjNAYl4nqKJzCXlH",
+        instituteId,
         "Students"
       );
       const q = query(studentsRef, where("email", "==", email));
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const routeDocRef = doc(
         db,
         "institutes",
-        "iEe3BjNAYl4nqKJzCXlH",
+        instituteId,
         "routes",
         routeNo
       );
@@ -224,7 +224,9 @@ async function updateFeeStatus() {
     // Step 1: Find studentId using email
     const studentsRef = collection(
       db,
-      "institutes/iEe3BjNAYl4nqKJzCXlH/Students"
+      "institutes",
+      instituteId, // Use dynamic instituteId here
+      "Students"
     );
     const studentQuery = query(studentsRef, where("email", "==", email));
     const studentSnapshot = await getDocs(studentQuery);
@@ -234,7 +236,7 @@ async function updateFeeStatus() {
       const studentId = studentData.studentId;
 
       // Step 2: Get Fees data for that studentId
-      const feeRef = doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Fees", studentId);
+      const feeRef = doc(db, "institutes", instituteId, "Fees", studentId);
       const feeSnap = await getDoc(feeRef);
 
       if (feeSnap.exists()) {
@@ -284,7 +286,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const studentsCollection = collection(
       db,
       "institutes",
-      "iEe3BjNAYl4nqKJzCXlH",
+      instituteId,
       "Students"
     );
     const q = query(studentsCollection, where("email", "==", email));
@@ -303,7 +305,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Step 2: Go to Attendance/{roll}/{today} and check if any doc has status "Present"
     const attendanceSubCollection = collection(
       db,
-      "institutes", "iEe3BjNAYl4nqKJzCXlH",
+      "institutes", instituteId,
       "Attendance",
       studentRoll,
       today

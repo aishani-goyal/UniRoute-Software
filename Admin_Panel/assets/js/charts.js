@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const db = firebase.firestore();
-  const instituteId = "iEe3BjNAYl4nqKJzCXlH";
+  const instituteId = localStorage.getItem("InstituteName");
 
   // ✅ Generic function to fetch count and update DOM
   async function fetchCountAndUpdate(collectionPath, elementId) {
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const feedbackCollection = await db
       .collection("institutes")
-      .doc("iEe3BjNAYl4nqKJzCXlH")
+      .doc(instituteId)
       .collection("Feedback")
       .get();
       let total = {
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const studentsRef = db
         .collection("institutes")
-        .doc("iEe3BjNAYl4nqKJzCXlH")
+        .doc(instituteId)
         .collection("Students");
       const snapshot = await studentsRef.get();
 
@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const studentsRef = db
         .collection("institutes")
-        .doc("iEe3BjNAYl4nqKJzCXlH")
+        .doc(instituteId)
         .collection("Students");
       const snapshot = await studentsRef.get();
 
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //Complaints
   async function loadUserComplaints() {
-    const instituteId = "iEe3BjNAYl4nqKJzCXlH";
+    const instituteId = localStorage.getItem("InstituteName");
     const studentsRef = db
       .collection("institutes")
       .doc(instituteId)

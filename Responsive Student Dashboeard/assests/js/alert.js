@@ -87,7 +87,7 @@ function showMCQPopup() {
     document.getElementById("emergency-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const selectedEmergency = document.querySelector('input[name="emergency"]:checked').value;
-
+        const instituteId = localStorage.getItem("InstituteName");
         try {
             // Get the logged-in student email from localStorage
             let loggedInEmail = localStorage.getItem("loggedInEmail");
@@ -98,7 +98,7 @@ function showMCQPopup() {
             }
 
             // Query the Students collection using the email
-            const studentsRef = collection(db, "institutes/iEe3BjNAYl4nqKJzCXlH/Students");
+            const studentsRef = collection(db, `institutes/${instituteId}/Students`);
             const q = query(studentsRef, where("email", "==", loggedInEmail));
             const querySnapshot = await getDocs(q);
 
@@ -113,7 +113,7 @@ function showMCQPopup() {
             const { studentId, name, routeNo } = studentData;
 
             // Create the alert with student info
-            await setDoc(doc(db, "institutes", "iEe3BjNAYl4nqKJzCXlH", "Emergency_Alert", studentId), {
+            await setDoc(doc(db, "institutes", instituteId, "Emergency_Alert", studentId),{
                 name: name,
                 routeNo: routeNo,
                 message: selectedEmergency,

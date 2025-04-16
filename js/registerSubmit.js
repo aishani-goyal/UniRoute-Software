@@ -112,14 +112,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     try {
       // Create a new document in 'institutes' collection
-      const instituteRef = await db.collection("institutes").add({
+      const instituteRef = await db.collection("institutes").doc(instituteName).set({
         name: instituteName,
         email: instituteEmail,
         registeredAt: firebase.firestore.Timestamp.now(),
       });
 
       // Store Admin Details in subcollection
-      await instituteRef.collection("adminDetails").doc("admin").set({
+      await db.collection("institutes")
+    .doc(instituteName)  // Use the university name as the doc ID
+    .collection("adminDetails")
+    .doc("admin")
+    .set({
+
         name: adminName,
         email: adminEmail,
         password: password, // Ideally, store hashed passwords
@@ -128,7 +133,12 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // Store Institute Details in subcollection
-      await instituteRef.collection("instituteDetails").doc("details").set({
+      await db.collection("institutes")
+    .doc(instituteName)  // Use the university name as the doc ID
+    .collection("instituteDetails")
+    .doc("details")
+    .set({
+
         name: instituteName,
         type : instituteType,
         email: instituteEmail,
@@ -140,10 +150,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       // Store Subscription Details in subcollection
-      await instituteRef
-        .collection("subscriptionDetails")
-        .doc("subscription")
-        .set({
+      await db.collection("institutes")
+    .doc(instituteName)  // Use the university name as the doc ID
+    .collection("subscriptionDetails")
+    .doc("subscription")
+    .set({
           type : subscriptionType,
           category : category
           

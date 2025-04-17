@@ -218,7 +218,7 @@ const feeStatusSpan = document.getElementById("Fee-status");
 
 // Get email from localStorage
 const email = localStorage.getItem("loggedInEmail");
-
+const instituteId = localStorage.getItem("InstituteName");
 async function updateFeeStatus() {
   try {
     // Step 1: Find studentId using email

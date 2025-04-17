@@ -147,6 +147,7 @@ function loadRoutes() {
 
 // Fetch location data for a given route
 async function fetchLocationForRoute(routeNumber) {
+  const instituteId = localStorage.getItem("InstituteName");
   const locationRef = doc(db, "institutes", instituteId,"Location", routeNumber); // Directly reference Location collection
   console.log(`Fetching location for route ${routeNumber} from: `, locationRef.path);
 

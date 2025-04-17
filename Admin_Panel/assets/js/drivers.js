@@ -207,6 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   const db = firebase.firestore();
+  const instituteId = localStorage.getItem("InstituteName");
   const driversRef = db
     .collection("institutes")
     .doc(instituteId)
@@ -307,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1000);
   }
 });
-
+const instituteId = localStorage.getItem("InstituteName");
 const vendorRef = db
   .collection("institutes")
   .doc(instituteId)

@@ -57,11 +57,17 @@ UniRoute stands out with:
 
 ## 🔍 System Architecture & Planning
 
-- **Use Case Diagram**
-- **Sequence Diagram**
-- **Class Diagram**
+### • Use Case Diagram
+![Use Case Diagram](img/usecaseDiag.png)
 
-(Refer to the poster image above for detailed diagrams.)
+### • Sequence Diagram
+![Sequence Diagram](img/sequenceDiag.png)
+
+### • Class Diagram
+![Class Diagram](img/classDiag.png)
+
+
+
 
 ---
 

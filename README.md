@@ -2,7 +2,7 @@
 
 # 🚍 UniRoute: Streamlining Campus Commutes
 
-![UniRoute Poster](img/Poster.png)
+---
 
 ## 🧩 Problem Statement
 

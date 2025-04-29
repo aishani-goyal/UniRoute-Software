@@ -14,7 +14,7 @@ Managing transportation in educational institutions is often challenging due to 
 
 **UniRoute** is a centralized transport management platform that optimizes commute operations through:
 - Real-time vehicle tracking
-- Intelligent route scheduling
+- Route scheduling
 - Seamless coordination between students, staff, and administrators
 - Enhanced communication for a smoother transit experience
 
